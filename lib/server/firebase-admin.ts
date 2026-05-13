@@ -1,20 +1,32 @@
-import * as admin from 'firebase-admin';
+import 'server-only';
 
-if (!admin.apps.length) {
-  try {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
-  } catch (error) {
-    console.error('Firebase admin initialization error', error);
+import { cert, getApps, initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
+
+const projectId = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+
+function getAdminApp() {
+  const existingApp = getApps()[0];
+  if (existingApp) return existingApp;
+
+  if (!projectId || !clientEmail || !privateKey) {
+    throw new Error('Missing Firebase Admin environment variables.');
   }
+
+  return initializeApp({
+    credential: cert({
+      projectId,
+      clientEmail,
+      privateKey,
+    }),
+  });
 }
 
-const adminDb = admin.firestore();
-const adminAuth = admin.auth();
+const adminApp = getAdminApp();
+const adminDb = getFirestore(adminApp);
+const adminAuth = getAuth(adminApp);
 
 export { adminDb, adminAuth };

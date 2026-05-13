@@ -3,12 +3,11 @@
 import Link from 'next/link';
 import { AlertTriangle, Bell, Calendar, Copy, Package } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard-layout';
-import MedicineTable from '@/components/medicine-table';
 import UpcomingEvents from '@/components/upcoming-events';
 import { useAppStore } from '@/lib/app-store';
 
 export default function DashboardPage() {
-  const { medicines, todayReminders, lowStockMedicines, expiringMedicines, duplicateMedicines } = useAppStore();
+  const { todayReminders, lowStockMedicines, expiringMedicines, duplicateMedicines } = useAppStore();
 
   const cards = [
     { label: "Today's pill reminders", value: todayReminders.length, detail: 'Mark doses taken or missed', icon: Bell, href: '/reminders', tone: 'blue' },
@@ -64,7 +63,7 @@ export default function DashboardPage() {
                     <p className="text-xs text-slate-500">Add or edit medicines</p>
                   </div>
                 </Link>
-                <Link href="/family" className="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:bg-slate-50 transition">
+                <Link href="/family-profiles" className="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:bg-slate-50 transition">
                   <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
                     <Bell className="w-5 h-5" />
                   </div>

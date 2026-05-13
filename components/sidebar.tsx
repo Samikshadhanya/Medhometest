@@ -7,7 +7,6 @@ import {
   Bell,
   ChevronLeft,
   ChevronRight,
-  HelpCircle,
   Home,
   LayoutGrid,
   Package,

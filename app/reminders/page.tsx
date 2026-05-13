@@ -1,12 +1,35 @@
 'use client';
 
-import { ChevronLeft, Check, Clock, Trash2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { ChevronLeft, Check, Clock, Plus, Trash2, X } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard-layout';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/app-store';
 
 export default function RemindersPage() {
-  const { todayReminders, medicines, getMember, markDose, deleteReminder, calendarUrlForMedicine } = useAppStore();
+  const { todayReminders, medicines, members, getMember, markDose, deleteReminder, addReminder, calendarUrlForMedicine } = useAppStore();
+  const [medicineId, setMedicineId] = useState(medicines[0]?.id ?? '');
+  const [time, setTime] = useState('08:00');
+
+  useEffect(() => {
+    if (!medicineId && medicines[0]?.id) {
+      setMedicineId(medicines[0].id);
+    }
+  }, [medicineId, medicines]);
+
+  const selectedMedicine = medicines.find((medicine) => medicine.id === medicineId);
+
+  const submitReminder = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!selectedMedicine) return;
+
+    await addReminder({
+      medicineId: selectedMedicine.id,
+      memberId: selectedMedicine.assignedToId,
+      time,
+    });
+  };
 
   return (
     <DashboardLayout>
@@ -94,7 +117,49 @@ export default function RemindersPage() {
           </div>
 
           <div className="space-y-6">
-
+            <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-4">
+              <h2 className="font-bold text-slate-900 flex items-center gap-2">
+                <Plus className="w-5 h-5 text-teal-600" />
+                Add reminder
+              </h2>
+              {medicines.length === 0 ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-slate-600">Add a pill first. Its reminder times will show up here automatically.</p>
+                  <Button asChild className="w-full bg-teal-600 hover:bg-teal-700">
+                    <Link href="/inventory">Add medicine</Link>
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={submitReminder} className="space-y-3">
+                  <label className="space-y-2 text-sm font-medium text-slate-700 block">
+                    Medicine
+                    <select
+                      value={medicineId}
+                      onChange={(event) => setMedicineId(event.target.value)}
+                      className="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white"
+                    >
+                      {medicines.map((medicine) => {
+                        const member = members.find((item) => item.id === medicine.assignedToId);
+                        return <option key={medicine.id} value={medicine.id}>{medicine.name} - {member?.name ?? 'Unassigned'}</option>;
+                      })}
+                    </select>
+                  </label>
+                  <label className="space-y-2 text-sm font-medium text-slate-700 block">
+                    Time
+                    <input
+                      type="time"
+                      value={time}
+                      onChange={(event) => setTime(event.target.value)}
+                      className="w-full border border-slate-300 rounded-lg px-3 py-2"
+                    />
+                  </label>
+                  <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Save reminder
+                  </Button>
+                </form>
+              )}
+            </div>
 
             <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-4">
               <h2 className="font-bold text-slate-900 flex items-center gap-2">

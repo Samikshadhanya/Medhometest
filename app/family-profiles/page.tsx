@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   AlertTriangle,
   BarChart3,
@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   Heart,
   Pill,
+  Plus,
   Shield,
   ShoppingCart,
   Stethoscope,
@@ -24,6 +25,7 @@ export default function FamilyProfilePage() {
   
   const [selectedMemberId, setSelectedMemberId] = useState(members[0]?.id ?? '');
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
+  const [isAddingMedicine, setIsAddingMedicine] = useState(false);
   
   // New profile form state
   const [newName, setNewName] = useState('');
@@ -32,10 +34,32 @@ export default function FamilyProfilePage() {
   const [newGender, setNewGender] = useState('Unspecified');
   const [newAllergies, setNewAllergies] = useState('');
   const [newHealthNotes, setNewHealthNotes] = useState('');
+  const [medicineForm, setMedicineForm] = useState({
+    name: '',
+    category: 'Prescription',
+    strength: '',
+    type: 'Tablet',
+    quantity: 10,
+    unit: 'tablets',
+    expiryDate: '',
+    manufactureDate: '',
+    pharmaName: '',
+    use: '',
+    dosage: '1 tablet',
+    mealInstruction: 'After food',
+    reminderTimes: '08:00',
+    lowStockAt: 5,
+  });
 
   const selectedMember = members.find((member) => member.id === selectedMemberId) ?? members[0];
   const profileMedicines = medicines.filter((medicine) => medicine.assignedToId === selectedMember?.id);
   const profileReminders = todayReminders.filter((reminder) => reminder.memberId === selectedMember?.id);
+
+  useEffect(() => {
+    if (!selectedMemberId && members[0]?.id) {
+      setSelectedMemberId(members[0].id);
+    }
+  }, [members, selectedMemberId]);
 
   const warnings = useMemo(() => {
     const allergyText = selectedMember?.knownAllergies.toLowerCase() ?? '';
@@ -63,6 +87,36 @@ export default function FamilyProfilePage() {
     setNewGender('Unspecified');
     setNewAllergies('');
     setNewHealthNotes('');
+  };
+
+  const handleAddMedicine = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!selectedMember?.id || !medicineForm.name.trim()) return;
+
+    await store.addMedicine({
+      ...medicineForm,
+      name: medicineForm.name.trim(),
+      assignedToId: selectedMember.id,
+      reminderTimes: medicineForm.reminderTimes.split(',').map((time) => time.trim()).filter(Boolean),
+    });
+
+    setIsAddingMedicine(false);
+    setMedicineForm({
+      name: '',
+      category: 'Prescription',
+      strength: '',
+      type: 'Tablet',
+      quantity: 10,
+      unit: 'tablets',
+      expiryDate: '',
+      manufactureDate: '',
+      pharmaName: '',
+      use: '',
+      dosage: '1 tablet',
+      mealInstruction: 'After food',
+      reminderTimes: '08:00',
+      lowStockAt: 5,
+    });
   };
 
   return (
@@ -98,6 +152,14 @@ export default function FamilyProfilePage() {
                     <UserPlus className="w-4 h-4 mr-2" />
                     Create Profile
                   </Button>
+                  <Button
+                    onClick={() => setIsAddingMedicine(true)}
+                    disabled={!selectedMember}
+                    className="w-full bg-teal-600 hover:bg-teal-700"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Pill for Selected Member
+                  </Button>
                 </div>
                 {selectedMember && (
                   <div className="flex items-center gap-3 mt-5 p-3 bg-white rounded-lg border border-teal-100 shadow-sm">
@@ -132,7 +194,18 @@ export default function FamilyProfilePage() {
               <Panel title="My Medicines" icon={<Pill className="w-5 h-5 text-teal-600" />}>
                 <div className="space-y-3">
                   {profileMedicines.length === 0 ? (
-                    <p className="text-sm text-slate-500 italic">No active medicines.</p>
+                    <div className="space-y-3">
+                      <p className="text-sm text-slate-500 italic">No active medicines.</p>
+                      <Button
+                        onClick={() => setIsAddingMedicine(true)}
+                        disabled={!selectedMember}
+                        size="sm"
+                        className="bg-teal-600 hover:bg-teal-700"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        {selectedMember ? 'Add pill' : 'Create profile first'}
+                      </Button>
+                    </div>
                   ) : null}
                   {profileMedicines.map((medicine) => (
                     <div key={medicine.id} className="border-b border-slate-100 pb-3 last:border-0 last:pb-0">
@@ -350,7 +423,72 @@ export default function FamilyProfilePage() {
           </div>
         </div>
       )}
+
+      {isAddingMedicine && selectedMember && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Add Pill for {selectedMember.name}</h2>
+                <p className="text-sm text-slate-500">Reminder times entered here will create today&apos;s dose schedule automatically.</p>
+              </div>
+              <button onClick={() => setIsAddingMedicine(false)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddMedicine} className="p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <MedicineField label="Medicine name" value={medicineForm.name} onChange={(value) => setMedicineForm({ ...medicineForm, name: value })} required />
+              <MedicineField label="Strength" value={medicineForm.strength} onChange={(value) => setMedicineForm({ ...medicineForm, strength: value })} placeholder="500mg" />
+              <MedicineField label="Type" value={medicineForm.type} onChange={(value) => setMedicineForm({ ...medicineForm, type: value })} />
+              <MedicineField label="Quantity" type="number" value={String(medicineForm.quantity)} onChange={(value) => setMedicineForm({ ...medicineForm, quantity: Number(value) })} />
+              <MedicineField label="Unit" value={medicineForm.unit} onChange={(value) => setMedicineForm({ ...medicineForm, unit: value })} />
+              <MedicineField label="Expiry date" value={medicineForm.expiryDate} onChange={(value) => setMedicineForm({ ...medicineForm, expiryDate: value })} placeholder="YYYY-MM-DD" required />
+              <MedicineField label="Simple use" value={medicineForm.use} onChange={(value) => setMedicineForm({ ...medicineForm, use: value })} placeholder="Blood pressure, fever, etc." required />
+              <MedicineField label="Dosage" value={medicineForm.dosage} onChange={(value) => setMedicineForm({ ...medicineForm, dosage: value })} />
+              <MedicineField label="Meal instruction" value={medicineForm.mealInstruction} onChange={(value) => setMedicineForm({ ...medicineForm, mealInstruction: value })} />
+              <MedicineField label="Reminder times" value={medicineForm.reminderTimes} onChange={(value) => setMedicineForm({ ...medicineForm, reminderTimes: value })} placeholder="08:00, 20:00" />
+              <MedicineField label="Low stock at" type="number" value={String(medicineForm.lowStockAt)} onChange={(value) => setMedicineForm({ ...medicineForm, lowStockAt: Number(value) })} />
+              <MedicineField label="Pharmacy / pharma" value={medicineForm.pharmaName} onChange={(value) => setMedicineForm({ ...medicineForm, pharmaName: value })} placeholder="Optional" />
+              <div className="md:col-span-3 flex justify-end gap-3 pt-2">
+                <Button type="button" variant="outline" onClick={() => setIsAddingMedicine(false)}>Cancel</Button>
+                <Button type="submit" className="bg-teal-600 hover:bg-teal-700">Save pill and reminders</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
+  );
+}
+
+function MedicineField({
+  label,
+  value,
+  onChange,
+  type = 'text',
+  placeholder,
+  required,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+}) {
+  return (
+    <label className="space-y-2 text-sm font-medium text-slate-700">
+      {label}
+      <input
+        required={required}
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        onChange={(event) => onChange(event.target.value)}
+        className="w-full border border-slate-300 rounded-lg px-3 py-2"
+      />
+    </label>
   );
 }
 

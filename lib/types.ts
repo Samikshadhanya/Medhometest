@@ -1,8 +1,9 @@
 export type FamilyMember = {
   id: string;
+  householdId?: string;
   name: string;
   role: string;
-  age: number;
+  age: string;
   gender: string;
   image: string;
   healthNotes: string[];
@@ -11,6 +12,7 @@ export type FamilyMember = {
 
 export type Medicine = {
   id: string;
+  householdId?: string;
   name: string;
   category: string;
   strength: string;
@@ -31,8 +33,10 @@ export type Medicine = {
 
 export type ReminderLog = {
   id: string;
+  householdId?: string;
   medicineId: string;
   memberId: string;
+  userId?: string;
   time: string;
   status: 'taken' | 'missed' | 'upcoming';
   takenAt?: string;
@@ -51,11 +55,16 @@ export type Caregiver = {
 };
 
 export type AppUser = {
+  uid?: string;
   name: string;
   email: string;
+  photoURL?: string;
   role: string;
   authProvider: 'email' | 'google' | 'microsoft' | 'facebook' | 'guest';
   household: string;
+  householdId?: string;
+  households?: string[];
+  householdIds?: string[];
   calendarConnected: boolean;
 };
 
@@ -69,3 +78,65 @@ export type AppState = {
 
 export type MedicineInput = Omit<Medicine, 'id' | 'image'> & { image?: string };
 export type MemberInput = Omit<FamilyMember, 'id' | 'image'> & { image?: string };
+
+export type HouseholdRole = 'owner' | 'admin' | 'member' | 'caregiver';
+
+export type UserProfile = {
+  uid: string;
+  name: string;
+  email: string;
+  photoURL?: string;
+  role: string;
+  authProvider: AppUser['authProvider'];
+  activeHouseholdId?: string;
+  householdIds: string[];
+  calendarConnected: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type HouseholdMember = {
+  uid: string;
+  role: HouseholdRole;
+  joinedAt?: string;
+};
+
+export type Household = {
+  id: string;
+  name: string;
+  ownerUid: string;
+  members: HouseholdMember[];
+  memberProfileIds?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type MedicineDocument = Omit<Medicine, 'assignedToId'> & {
+  householdId: string;
+  assignedToUid?: string;
+  assignedToMemberId?: string;
+  createdByUid: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type CreateMedicineInput = Omit<MedicineDocument, 'id' | 'createdByUid' | 'createdAt' | 'updatedAt' | 'image'> & {
+  image?: string;
+};
+
+export type ReminderDocument = {
+  id: string;
+  householdId: string;
+  medicineId: string;
+  assignedToUid?: string;
+  assignedToMemberId?: string;
+  time: string;
+  status: ReminderLog['status'];
+  takenAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type CreateHouseholdInput = {
+  name: string;
+};

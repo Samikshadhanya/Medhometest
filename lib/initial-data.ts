@@ -10,6 +10,7 @@ export const initialState: AppState = {
     role: 'Host',
     authProvider: 'email',
     household: '',
+    households: [],
     calendarConnected: false,
   },
   members: [],

@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, ChevronDown, LogOut, Menu } from 'lucide-react';
+import { AlertTriangle, Bell, CalendarClock, ChevronDown, LogOut, Menu, PackageX } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/lib/app-store';
@@ -11,17 +11,36 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick }: HeaderProps) {
   const router = useRouter();
-  const { user, signOut, todayReminders, switchHousehold, addHousehold, medicines } = useAppStore();
+  const { user, signOut, todayReminders, switchHousehold, addHousehold, lowStockMedicines, expiringMedicines } = useAppStore();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showHouseholdMenu, setShowHouseholdMenu] = useState(false);
   const [showNotificationsMenu, setShowNotificationsMenu] = useState(false);
   const [newHouseholdName, setNewHouseholdName] = useState('');
+  const [householdError, setHouseholdError] = useState('');
+  const [addingHousehold, setAddingHousehold] = useState(false);
 
-  // Generate some notifications from the data (and some dummy ones to ensure it looks populated as requested)
   const notifications = [
-    { id: 1, type: 'alert', title: 'Skipped Dose', message: 'John missed his 8:00 AM Metformin.', time: '10 mins ago' },
-    { id: 2, type: 'warning', title: 'Low Stock', message: 'Lisinopril is running low (4 pills left).', time: '1 hour ago' },
-    { id: 3, type: 'info', title: 'Expiring Soon', message: 'Aspirin expires next month.', time: '2 days ago' },
+    ...todayReminders.filter((reminder) => reminder.status === 'missed').map((reminder) => ({
+      id: `missed-${reminder.id}`,
+      type: 'alert',
+      icon: AlertTriangle,
+      title: 'Missed dose',
+      message: `A ${reminder.time} reminder was marked missed.`,
+    })),
+    ...lowStockMedicines.map((medicine) => ({
+      id: `stock-${medicine.id}`,
+      type: 'warning',
+      icon: PackageX,
+      title: 'Low stock',
+      message: `${medicine.name} has ${medicine.quantity} ${medicine.unit} left.`,
+    })),
+    ...expiringMedicines.map((medicine) => ({
+      id: `expiry-${medicine.id}`,
+      type: 'info',
+      icon: CalendarClock,
+      title: 'Expiring soon',
+      message: `${medicine.name} expires on ${medicine.expiryDate}.`,
+    })),
   ];
 
   return (
@@ -69,18 +88,29 @@ export default function Header({ onMenuClick }: HeaderProps) {
                       className="w-full text-sm px-2 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
                     />
                     <button 
-                      onClick={() => {
-                        if (newHouseholdName.trim()) {
-                          addHousehold(newHouseholdName.trim());
+                      disabled={addingHousehold}
+                      onClick={async () => {
+                        const name = newHouseholdName.trim();
+                        if (!name) return;
+
+                        try {
+                          setAddingHousehold(true);
+                          setHouseholdError('');
+                          await addHousehold(name);
                           setNewHouseholdName('');
                           setShowHouseholdMenu(false);
+                        } catch (error) {
+                          setHouseholdError(error instanceof Error ? error.message : 'Could not create household.');
+                        } finally {
+                          setAddingHousehold(false);
                         }
                       }}
-                      className="px-3 py-1.5 bg-teal-600 text-white text-sm rounded-md hover:bg-teal-700 font-medium transition"
+                      className="px-3 py-1.5 bg-teal-600 text-white text-sm rounded-md hover:bg-teal-700 font-medium transition disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      Add
+                      {addingHousehold ? 'Adding' : 'Add'}
                     </button>
                   </div>
+                  {householdError && <p className="px-2 pb-1 text-xs font-medium text-red-600">{householdError}</p>}
                 </div>
               </div>
             </div>
@@ -96,30 +126,38 @@ export default function Header({ onMenuClick }: HeaderProps) {
             className="relative p-2 hover:bg-slate-100 rounded-lg transition"
           >
             <Bell className="w-6 h-6 text-slate-600" />
-            <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
+            {notifications.length > 0 && <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />}
           </button>
 
           {showNotificationsMenu && (
             <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-slate-200 z-30 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
                 <h3 className="font-semibold text-slate-900">Notifications</h3>
-                <span className="text-xs font-medium bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">3 New</span>
+                <span className="text-xs font-medium bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">{notifications.length} New</span>
               </div>
               <div className="max-h-[300px] overflow-y-auto">
-                {notifications.map((notif) => (
+                {notifications.length === 0 && (
+                  <div className="p-4 text-sm text-slate-600">No medicine alerts right now.</div>
+                )}
+                {notifications.map((notif) => {
+                  const Icon = notif.icon;
+                  return (
                   <div key={notif.id} className="p-4 border-b border-slate-50 hover:bg-slate-50 transition cursor-pointer">
                     <div className="flex gap-3">
                       <div className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${
                         notif.type === 'alert' ? 'bg-red-500' : notif.type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
                       }`} />
                       <div>
-                        <p className="text-sm font-medium text-slate-900">{notif.title}</p>
+                        <p className="text-sm font-medium text-slate-900 flex items-center gap-1.5">
+                          <Icon className="h-3.5 w-3.5" />
+                          {notif.title}
+                        </p>
                         <p className="text-sm text-slate-600 mt-0.5">{notif.message}</p>
-                        <p className="text-xs text-slate-400 mt-1">{notif.time}</p>
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
               <div className="p-2 border-t border-slate-100 bg-slate-50">
                 <button 

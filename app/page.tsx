@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   const goToDashboard = async (provider: 'email' | 'facebook' | 'guest' | 'google') => {
     try {
-      await signIn(provider, email);
+      await signIn(provider, email, guestName, guestAge, guestRole);
       // Fallback manual push if the useEffect doesn't trigger fast enough
       router.push('/dashboard');
     } catch (error) {
@@ -128,7 +128,9 @@ export default function LoginPage() {
                   <label className="block space-y-2">
                     <span className="text-sm font-medium text-slate-700">Age</span>
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       required
                       value={guestAge}
                       onChange={(e) => setGuestAge(e.target.value)}

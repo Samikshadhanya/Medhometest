@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Menu, X, Bell, ChevronDown, LogOut } from 'lucide-react';
 import Sidebar from './sidebar';
 import Header from './header';
 

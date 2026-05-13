@@ -2,7 +2,6 @@
 
 import { ChevronLeft, ShieldCheck } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard-layout';
-import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/app-store';
 
 export default function SettingsPage() {

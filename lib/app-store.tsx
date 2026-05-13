@@ -1,18 +1,23 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { initialState } from '@/lib/initial-data';
-import type { AppState, AppUser, Caregiver, FamilyMember, Medicine, MedicineInput, MemberInput, ReminderInput, ReminderLog } from '@/lib/types';
-import { auth, db, googleProvider } from './firebase';
+import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
-import { collection, doc, onSnapshot, query, where, setDoc, updateDoc, deleteDoc, getDoc, addDoc } from 'firebase/firestore';
+import { initialState, medicineImage } from '@/lib/initial-data';
+import type { AppState, AppUser, Caregiver, FamilyMember, Household, Medicine, MedicineInput, MemberInput, ReminderInput, ReminderLog } from '@/lib/types';
+import { auth, db, googleProvider } from '@/lib/firebase';
+import { createHousehold, fetchUserProfile } from '@/services/householdService';
+import { createMedicine, deleteMedicine as deleteMedicineRequest, fetchMedicines, updateMedicine as updateMedicineRequest } from '@/services/medicineService';
+import { createReminder, deleteReminder as deleteReminderRequest, fetchReminders, updateReminder as updateReminderRequest } from '@/services/reminderService';
 
 export type { AppState, AppUser, Caregiver, FamilyMember, Medicine, MedicineInput, MemberInput, ReminderInput, ReminderLog };
 
 type AppStore = AppState & {
   loading: boolean;
+  error: string | null;
   signIn: (provider: AppUser['authProvider'], email?: string, name?: string, age?: string, role?: string) => Promise<void>;
   signOut: () => Promise<void>;
+  refreshHouseholdData: () => Promise<void>;
   addMedicine: (medicine: MedicineInput) => Promise<void>;
   updateMedicine: (id: string, medicine: Partial<MedicineInput>) => Promise<void>;
   deleteMedicine: (id: string) => Promise<void>;
@@ -36,6 +41,10 @@ type AppStore = AppState & {
 
 const AppContext = createContext<AppStore | null>(null);
 
+const localProviders = new Set<AppUser['authProvider']>(['email', 'guest']);
+
+const newLocalId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
 const daysUntil = (date: string) => {
   const target = new Date(`${date}T00:00:00`);
   const today = new Date();
@@ -43,99 +52,99 @@ const daysUntil = (date: string) => {
   return Math.ceil((target.getTime() - today.getTime()) / 86400000);
 };
 
+const userFromProfile = (
+  profile: Awaited<ReturnType<typeof fetchUserProfile>>['profile'],
+  household: Household | null,
+  households: Household[] = [],
+): AppUser => ({
+  uid: profile.uid,
+  name: profile.name || profile.email.split('@')[0] || 'User',
+  email: profile.email,
+  photoURL: profile.photoURL,
+  role: profile.role || 'Host',
+  authProvider: profile.authProvider || 'google',
+  household: household?.name || 'My Family',
+  householdId: household?.id || profile.activeHouseholdId || profile.householdIds[0],
+  households: households.length ? households.map((item) => item.name) : household ? [household.name] : [],
+  householdIds: households.length ? households.map((item) => item.id) : profile.householdIds,
+  calendarConnected: profile.calendarConnected,
+});
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AppState>(initialState);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadHouseholdData = useCallback(async (householdId?: string) => {
+    if (!householdId || !auth.currentUser) return;
+
+    const [medicineResult, reminderResult] = await Promise.all([
+      fetchMedicines(householdId),
+      fetchReminders({ householdId }),
+    ]);
+
+    setState((current) => ({
+      ...current,
+      medicines: medicineResult.medicines,
+      reminderLogs: reminderResult.reminders,
+    }));
+  }, []);
+
+  const loadAuthenticatedUser = useCallback(async () => {
+    const bundle = await fetchUserProfile();
+    const appUser = userFromProfile(bundle.profile, bundle.household, bundle.households);
+
+    setState((current) => ({
+      ...current,
+      user: appUser,
+      members: bundle.familyMembers,
+    }));
+
+    await loadHouseholdData(appUser.householdId);
+  }, [loadHouseholdData]);
 
   useEffect(() => {
+    const fallbackTimer = window.setTimeout(() => {
+      setLoading(false);
+    }, 8000);
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
-          const userDocRef = doc(db, 'users', firebaseUser.uid);
-          // Add a strict 3-second timeout so the loading screen doesn't hang indefinitely if Firestore connection fails
-          const userDoc = await Promise.race([
-            getDoc(userDocRef),
-            new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Firestore connection timeout')), 3000))
-          ]) as import('firebase/firestore').DocumentSnapshot;
-          
-          let currentUser: AppUser;
-          if (userDoc.exists()) {
-            currentUser = userDoc.data() as AppUser;
-          } else {
-            currentUser = {
-              name: firebaseUser.displayName || 'User',
-              email: firebaseUser.email || '',
-              role: 'Host',
-              authProvider: 'google',
-              household: 'My Family',
-              households: ['My Family'],
-              calendarConnected: false,
-            };
-            try {
-              await setDoc(userDocRef, currentUser);
-            } catch (e) {
-              console.warn("Could not create user doc (likely offline or missing permissions)", e);
-            }
-          }
-          setState((s) => ({ ...s, user: currentUser }));
-        } catch (error: any) {
-          console.warn("Auth state fallback triggered (client offline or permissions missing):", error?.message);
-          // Fallback so the app doesn't hang indefinitely
-          const fallbackUser: AppUser = {
-            name: firebaseUser.displayName || 'User',
-            email: firebaseUser.email || '',
-            role: 'Host',
-            authProvider: 'google',
-            household: 'My Family',
-            households: ['My Family'],
-            calendarConnected: false,
-          };
-          setState((s) => ({ ...s, user: fallbackUser }));
-        }
-        setLoading(false);
-      } else {
+      window.clearTimeout(fallbackTimer);
+      setError(null);
+
+      if (!firebaseUser) {
         setState(initialState);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        await loadAuthenticatedUser();
+      } catch (loadError) {
+        const message = loadError instanceof Error ? loadError.message : 'Failed to load your MedHome data.';
+        setError(message);
+      } finally {
         setLoading(false);
       }
     });
 
-    return () => unsubscribe();
-  }, []);
-
-  // Listeners for data when user and household are available
-  useEffect(() => {
-    if (!state.user?.household) return;
-    
-    const household = state.user.household;
-
-    const handleError = (error: any) => {
-      console.warn("Firestore subscription fallback (client offline or permissions missing):", error?.message);
-      setLoading(false);
-    };
-
-    const unsubMedicines = onSnapshot(query(collection(db, 'medicines'), where('household', '==', household)), (snap) => {
-      setState((s) => ({ ...s, medicines: snap.docs.map((d) => ({ id: d.id, ...d.data() } as Medicine)) }));
-    }, handleError);
-    
-    const unsubMembers = onSnapshot(query(collection(db, 'members'), where('household', '==', household)), (snap) => {
-      setState((s) => ({ ...s, members: snap.docs.map((d) => ({ id: d.id, ...d.data() } as FamilyMember)) }));
-    }, handleError);
-    
-    const unsubReminders = onSnapshot(query(collection(db, 'reminders'), where('household', '==', household)), (snap) => {
-      setState((s) => ({ ...s, reminderLogs: snap.docs.map((d) => ({ id: d.id, ...d.data() } as ReminderLog)) }));
-    }, handleError);
-
-    const unsubCaregivers = onSnapshot(query(collection(db, 'caregivers'), where('household', '==', household)), (snap) => {
-      setState((s) => ({ ...s, caregivers: snap.docs.map((d) => ({ id: d.id, ...d.data() } as Caregiver)) }));
-    }, handleError);
-
     return () => {
-      unsubMedicines();
-      unsubMembers();
-      unsubReminders();
-      unsubCaregivers();
+      window.clearTimeout(fallbackTimer);
+      unsubscribe();
     };
-  }, [state.user?.household]);
+  }, [loadAuthenticatedUser]);
+
+  const refreshHouseholdData = useCallback(async () => {
+    if (!state.user.householdId || localProviders.has(state.user.authProvider)) return;
+    setError(null);
+
+    try {
+      await loadHouseholdData(state.user.householdId);
+    } catch (refreshError) {
+      setError(refreshError instanceof Error ? refreshError.message : 'Failed to refresh household data.');
+    }
+  }, [loadHouseholdData, state.user.authProvider, state.user.householdId]);
 
   const value = useMemo<AppStore>(() => {
     const lowStockMedicines = state.medicines.filter((medicine) => medicine.quantity <= medicine.lowStockAt);
@@ -158,106 +167,261 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${formatDate(start)}/${formatDate(end)}`;
     };
 
-    const household = state.user?.household;
+    const householdId = state.user.householdId;
+    const isLocalSession = !auth.currentUser || localProviders.has(state.user.authProvider);
 
     return {
       ...state,
       loading,
+      error,
       lowStockMedicines,
       expiringMedicines,
       duplicateMedicines,
       purchaseList: lowStockMedicines,
       todayReminders: state.reminderLogs,
       calendarUrlForMedicine,
+      refreshHouseholdData,
       signIn: async (provider, email, name, age, role) => {
+        setError(null);
+
         if (provider === 'google') {
-          const res = await signInWithPopup(auth, googleProvider);
-          try {
-            const userDocRef = doc(db, 'users', res.user.uid);
-            const userDoc = await getDoc(userDocRef);
-            if (!userDoc.exists()) {
-              await setDoc(userDocRef, {
-                name: res.user.displayName || 'User',
-                email: res.user.email || '',
-                role: 'Host',
-                authProvider: 'google',
-                household: 'My Family',
-                households: ['My Family'],
-                calendarConnected: false,
-              });
-            }
-          } catch (e) {
-            console.warn("Could not sync new user to Firestore (likely rules missing), proceeding with auth:", e);
-          }
-        } else if (provider === 'guest') {
-          // For browser-use testing: mock a local user session so the dashboard loads and data can be added locally
-          setState((s) => ({
-            ...s,
-            user: {
-              name: name || 'Guest User',
-              email: email || 'guest@test.com',
-              role: role || 'Host',
-              authProvider: 'guest',
-              household: 'Test Family',
-              households: ['Test Family'],
-              calendarConnected: false,
-            }
-          }));
+          await signInWithPopup(auth, googleProvider);
+          await loadAuthenticatedUser();
+          return;
         }
-      },
-      signOut: async () => {
-        await firebaseSignOut(auth);
-      },
-      switchHousehold: async (newHousehold) => {
-        if (!auth.currentUser) return;
-        await updateDoc(doc(db, 'users', auth.currentUser.uid), { household: newHousehold });
-      },
-      addHousehold: async (newHousehold) => {
-        if (!auth.currentUser) return;
-        const currentHouseholds = state.user.households || [state.user.household];
-        if (!currentHouseholds.includes(newHousehold)) {
-          await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-            households: [...currentHouseholds, newHousehold],
-            household: newHousehold,
-          });
-        }
-      },
-      addMedicine: async (medicine) => {
-        await addDoc(collection(db, 'medicines'), { ...medicine, household });
-      },
-      updateMedicine: async (id, medicine) => {
-        await updateDoc(doc(db, 'medicines', id), medicine);
-      },
-      deleteMedicine: async (id) => {
-        await deleteDoc(doc(db, 'medicines', id));
-      },
-      addMember: async (member) => {
-        await addDoc(collection(db, 'members'), { ...member, household });
-      },
-      updateMember: async (id, member) => {
-        await updateDoc(doc(db, 'members', id), member);
-      },
-      addReminder: async (reminder) => {
-        await addDoc(collection(db, 'reminders'), { ...reminder, household });
-      },
-      deleteReminder: async (id) => {
-        await deleteDoc(doc(db, 'reminders', id));
-      },
-      markDose: async (id, status) => {
-        await updateDoc(doc(db, 'reminders', id), { 
-          status, 
-          takenAt: status === 'taken' ? new Date().toISOString() : null 
+
+        const fallbackName = provider === 'guest' ? name || 'Guest User' : email?.split('@')[0] || 'Demo User';
+        const memberId = newLocalId('member');
+        setState({
+          ...initialState,
+          user: {
+            uid: newLocalId('local-user'),
+            name: fallbackName,
+            email: email || '',
+            role: role || 'Host',
+            authProvider: provider,
+            household: provider === 'guest' ? 'Guest Household' : 'Local Household',
+            householdId: newLocalId('local-household'),
+            households: [provider === 'guest' ? 'Guest Household' : 'Local Household'],
+            householdIds: [],
+            calendarConnected: false,
+          },
+          members: provider === 'guest'
+            ? [{
+                id: memberId,
+                name: fallbackName,
+                role: role || 'Family Member',
+                age: age || 'Unspecified',
+                gender: 'Unspecified',
+                image: `https://ui-avatars.com/api/?name=${encodeURIComponent(fallbackName)}&background=0f766e&color=fff`,
+                healthNotes: [],
+                knownAllergies: 'None known',
+              }]
+            : [],
         });
       },
+      signOut: async () => {
+        if (auth.currentUser) {
+          await firebaseSignOut(auth);
+        }
+        setState(initialState);
+      },
+      switchHousehold: async (newHousehold) => {
+        const index = state.user.households?.findIndex((name) => name === newHousehold) ?? -1;
+        const nextHouseholdId = index >= 0 ? state.user.householdIds?.[index] : undefined;
+        setState((current) => ({ ...current, user: { ...current.user, household: newHousehold, householdId: nextHouseholdId || current.user.householdId } }));
+        if (nextHouseholdId && !isLocalSession) await loadHouseholdData(nextHouseholdId);
+      },
+      addHousehold: async (newHousehold) => {
+        if (isLocalSession) {
+          setState((current) => ({
+            ...current,
+            user: {
+              ...current.user,
+              household: newHousehold,
+              householdId: newLocalId('local-household'),
+              households: [...(current.user.households || []), newHousehold],
+            },
+          }));
+          return;
+        }
+
+        const result = await createHousehold(newHousehold);
+        const bundle = await fetchUserProfile();
+        const appUser = userFromProfile(bundle.profile, result.household, bundle.households);
+        setState((current) => ({
+          ...current,
+          user: appUser,
+          members: bundle.familyMembers,
+          medicines: [],
+          reminderLogs: [],
+        }));
+      },
+      addMedicine: async (medicine) => {
+        const reminderTimes = medicine.reminderTimes.filter(Boolean);
+
+        if (isLocalSession) {
+          const id = newLocalId('med');
+          const newMedicine: Medicine = { ...medicine, reminderTimes, id, image: medicine.image || medicineImage, householdId };
+          const newReminders: ReminderLog[] = reminderTimes.map((time) => ({
+            id: newLocalId('reminder'),
+            householdId,
+            medicineId: id,
+            memberId: medicine.assignedToId,
+            time,
+            status: 'upcoming',
+          }));
+          setState((current) => ({
+            ...current,
+            medicines: [...current.medicines, newMedicine],
+            reminderLogs: [...current.reminderLogs, ...newReminders],
+          }));
+          return;
+        }
+
+        if (!householdId) throw new Error('No active household selected.');
+        const result = await createMedicine({ ...medicine, householdId, assignedToMemberId: medicine.assignedToId, reminderTimes });
+        setState((current) => ({ ...current, medicines: [...current.medicines, result.medicine] }));
+        await loadHouseholdData(householdId);
+      },
+      updateMedicine: async (id, medicine) => {
+        if (isLocalSession) {
+          setState((current) => ({ ...current, medicines: current.medicines.map((item) => item.id === id ? { ...item, ...medicine } : item) }));
+          return;
+        }
+
+        const result = await updateMedicineRequest(id, medicine);
+        setState((current) => ({ ...current, medicines: current.medicines.map((item) => item.id === id ? result.medicine : item) }));
+      },
+      deleteMedicine: async (id) => {
+        if (isLocalSession) {
+          setState((current) => ({
+            ...current,
+            medicines: current.medicines.filter((item) => item.id !== id),
+            reminderLogs: current.reminderLogs.filter((item) => item.medicineId !== id),
+          }));
+          return;
+        }
+
+        await deleteMedicineRequest(id);
+        setState((current) => ({
+          ...current,
+          medicines: current.medicines.filter((item) => item.id !== id),
+          reminderLogs: current.reminderLogs.filter((item) => item.medicineId !== id),
+        }));
+      },
+      addMember: async (member) => {
+        const nextMember = {
+          ...member,
+          householdId,
+          image: member.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=0f766e&color=fff`,
+        };
+
+        if (isLocalSession) {
+          setState((current) => ({ ...current, members: [...current.members, { ...nextMember, id: newLocalId('member') }] }));
+          return;
+        }
+
+        const docRef = await addDoc(collection(db, 'members'), nextMember);
+        setState((current) => ({ ...current, members: [...current.members, { ...nextMember, id: docRef.id }] }));
+      },
+      updateMember: async (id, member) => {
+        if (isLocalSession) {
+          setState((current) => ({ ...current, members: current.members.map((item) => item.id === id ? { ...item, ...member } : item) }));
+          return;
+        }
+
+        await updateDoc(doc(db, 'members', id), member);
+        setState((current) => ({ ...current, members: current.members.map((item) => item.id === id ? { ...item, ...member } : item) }));
+      },
+      addReminder: async (reminder) => {
+        if (isLocalSession) {
+          setState((current) => ({
+            ...current,
+            reminderLogs: [...current.reminderLogs, { ...reminder, id: newLocalId('reminder'), householdId, status: reminder.status || 'upcoming' }],
+          }));
+          return;
+        }
+
+        if (!householdId) throw new Error('No active household selected.');
+        const result = await createReminder({ ...reminder, householdId, userId: state.user.uid });
+        setState((current) => ({ ...current, reminderLogs: [...current.reminderLogs, result.reminder] }));
+      },
+      deleteReminder: async (id) => {
+        if (isLocalSession) {
+          setState((current) => ({ ...current, reminderLogs: current.reminderLogs.filter((item) => item.id !== id) }));
+          return;
+        }
+
+        await deleteReminderRequest(id);
+        setState((current) => ({ ...current, reminderLogs: current.reminderLogs.filter((item) => item.id !== id) }));
+      },
+      markDose: async (id, status) => {
+        const takenAt = status === 'taken' ? new Date().toISOString() : undefined;
+
+        if (isLocalSession) {
+          setState((current) => ({
+            ...current,
+            reminderLogs: current.reminderLogs.map((item) => item.id === id ? { ...item, status, takenAt } : item),
+          }));
+          return;
+        }
+
+        const result = await updateReminderRequest(id, { status, takenAt });
+        setState((current) => ({ ...current, reminderLogs: current.reminderLogs.map((item) => item.id === id ? result.reminder : item) }));
+      },
       addCaregiver: async (caregiver) => {
-        await addDoc(collection(db, 'caregivers'), { ...caregiver, status: 'Active', household });
+        if (isLocalSession) {
+          setState((current) => ({ ...current, caregivers: [...current.caregivers, { ...caregiver, id: newLocalId('caregiver'), status: 'Active' }] }));
+          return;
+        }
+
+        const docRef = await addDoc(collection(db, 'caregivers'), { ...caregiver, householdId, status: 'Active' });
+        setState((current) => ({ ...current, caregivers: [...current.caregivers, { ...caregiver, id: docRef.id, status: 'Active' }] }));
       },
       removeCaregiver: async (id) => {
+        if (isLocalSession) {
+          setState((current) => ({ ...current, caregivers: current.caregivers.filter((item) => item.id !== id) }));
+          return;
+        }
+
         await deleteDoc(doc(db, 'caregivers', id));
+        setState((current) => ({ ...current, caregivers: current.caregivers.filter((item) => item.id !== id) }));
       },
       getMember: (id) => state.members.find((member) => member.id === id),
     };
-  }, [loading, state]);
+  }, [error, loadAuthenticatedUser, loadHouseholdData, loading, refreshHouseholdData, state]);
+
+  useEffect(() => {
+    if (!state.user.householdId || localProviders.has(state.user.authProvider)) return;
+
+    let cancelled = false;
+
+    async function loadSecondaryCollections() {
+      try {
+        const [membersSnapshot, caregiversSnapshot] = await Promise.all([
+          getDocs(query(collection(db, 'members'), where('householdId', '==', state.user.householdId))),
+          getDocs(query(collection(db, 'caregivers'), where('householdId', '==', state.user.householdId))),
+        ]);
+
+        if (cancelled) return;
+
+        setState((current) => ({
+          ...current,
+          members: membersSnapshot.docs.map((item) => ({ id: item.id, ...item.data() } as FamilyMember)),
+          caregivers: caregiversSnapshot.docs.map((item) => ({ id: item.id, ...item.data() } as Caregiver)),
+        }));
+      } catch (secondaryError) {
+        setError(secondaryError instanceof Error ? secondaryError.message : 'Failed to load household members.');
+      }
+    }
+
+    loadSecondaryCollections();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [state.user.authProvider, state.user.householdId]);
 
   if (loading) {
     return (
@@ -267,7 +431,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={value}>
+      {error && (
+        <div className="fixed left-1/2 top-4 z-50 -translate-x-1/2 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 shadow-sm">
+          {error}
+        </div>
+      )}
+      {children}
+    </AppContext.Provider>
+  );
 }
 
 export function useAppStore() {
