@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from './sidebar';
 import Header from './header';
 
@@ -9,20 +9,25 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 768px)');
+    const syncSidebar = () => setSidebarOpen(media.matches);
+
+    syncSidebar();
+    media.addEventListener('change', syncSidebar);
+    return () => media.removeEventListener('change', syncSidebar);
+  }, []);
 
   return (
-    <div className="flex h-screen bg-slate-50">
-      {/* Sidebar */}
+    <div className="app-shell flex bg-slate-50">
       <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
+      <div className="min-w-0 flex-1 flex flex-col overflow-hidden">
         <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
-        {/* Content */}
-        <main className="flex-1 overflow-auto">
+        <main className="min-h-0 flex-1 overflow-auto app-content">
           {children}
         </main>
       </div>

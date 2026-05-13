@@ -26,6 +26,7 @@ export default function FamilyProfilePage() {
   const [selectedMemberId, setSelectedMemberId] = useState(members[0]?.id ?? '');
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
   const [isAddingMedicine, setIsAddingMedicine] = useState(false);
+  const [isInvitingCaregiver, setIsInvitingCaregiver] = useState(false);
   
   // New profile form state
   const [newName, setNewName] = useState('');
@@ -34,6 +35,11 @@ export default function FamilyProfilePage() {
   const [newGender, setNewGender] = useState('Unspecified');
   const [newAllergies, setNewAllergies] = useState('');
   const [newHealthNotes, setNewHealthNotes] = useState('');
+  const [caregiverForm, setCaregiverForm] = useState({
+    name: '',
+    relationship: '',
+    accessLevel: 'Reminder Access',
+  });
   const [medicineForm, setMedicineForm] = useState({
     name: '',
     category: 'Prescription',
@@ -119,15 +125,29 @@ export default function FamilyProfilePage() {
     });
   };
 
+  const handleInviteCaregiver = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!caregiverForm.name.trim() || !caregiverForm.relationship.trim()) return;
+
+    await addCaregiver({
+      name: caregiverForm.name.trim(),
+      relationship: caregiverForm.relationship.trim(),
+      accessLevel: caregiverForm.accessLevel,
+    });
+
+    setCaregiverForm({ name: '', relationship: '', accessLevel: 'Reminder Access' });
+    setIsInvitingCaregiver(false);
+  };
+
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         <div className="flex items-center gap-4">
           <button onClick={() => window.history.back()} className="p-2 hover:bg-slate-100 rounded-lg transition">
             <ChevronLeft className="w-6 h-6" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Family Profiles</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Family Profiles</h1>
             <p className="text-slate-600 mt-1">Manage family members and view their health details.</p>
           </div>
         </div>
@@ -184,7 +204,7 @@ export default function FamilyProfilePage() {
                   <p className="text-slate-600"><span className="font-medium text-slate-900">Known allergies:</span> {selectedMember?.knownAllergies || 'None known'}</p>
                 </div>
                 <div className="text-right bg-slate-50 p-3 rounded-lg border border-slate-100">
-                  <p className="text-3xl font-bold text-teal-700">{profileMedicines.length}</p>
+                  <p className="text-2xl md:text-3xl font-bold text-teal-700">{profileMedicines.length}</p>
                   <p className="text-sm font-medium text-slate-500">active medicines</p>
                 </div>
               </div>
@@ -295,7 +315,7 @@ export default function FamilyProfilePage() {
                       <Button onClick={() => removeCaregiver(caregiver.id)} size="sm" variant="outline">Remove</Button>
                     </div>
                   ))}
-                  <Button onClick={() => addCaregiver({ name: 'New Caregiver', relationship: 'Family', accessLevel: 'Reminder Access' })} className="w-full bg-slate-100 text-slate-900 hover:bg-slate-200 shadow-none border border-slate-200">
+                  <Button onClick={() => setIsInvitingCaregiver(true)} className="w-full bg-slate-100 text-slate-900 hover:bg-slate-200 shadow-none border border-slate-200">
                     <UserPlus className="w-4 h-4 mr-2" />
                     Invite caregiver
                   </Button>
@@ -358,7 +378,7 @@ export default function FamilyProfilePage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-slate-700">Role/Relationship</label>
                   <input 
@@ -453,6 +473,52 @@ export default function FamilyProfilePage() {
               <div className="md:col-span-3 flex justify-end gap-3 pt-2">
                 <Button type="button" variant="outline" onClick={() => setIsAddingMedicine(false)}>Cancel</Button>
                 <Button type="submit" className="bg-teal-600 hover:bg-teal-700">Save pill and reminders</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isInvitingCaregiver && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+              <h2 className="text-xl font-bold text-slate-900">Invite Caregiver</h2>
+              <button onClick={() => setIsInvitingCaregiver(false)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleInviteCaregiver} className="p-5 space-y-4">
+              <MedicineField
+                label="Caregiver name"
+                value={caregiverForm.name}
+                onChange={(value) => setCaregiverForm({ ...caregiverForm, name: value })}
+                placeholder="e.g. Priya Rao"
+                required
+              />
+              <MedicineField
+                label="Relationship"
+                value={caregiverForm.relationship}
+                onChange={(value) => setCaregiverForm({ ...caregiverForm, relationship: value })}
+                placeholder="e.g. Nurse, daughter, neighbor"
+                required
+              />
+              <label className="space-y-2 text-sm font-medium text-slate-700 block">
+                Access level
+                <select
+                  value={caregiverForm.accessLevel}
+                  onChange={(event) => setCaregiverForm({ ...caregiverForm, accessLevel: event.target.value })}
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white"
+                >
+                  <option>Reminder Access</option>
+                  <option>Inventory Access</option>
+                  <option>Full Household Access</option>
+                </select>
+              </label>
+              <div className="pt-2 flex justify-end gap-3">
+                <Button type="button" variant="outline" onClick={() => setIsInvitingCaregiver(false)}>Cancel</Button>
+                <Button type="submit" className="bg-teal-600 hover:bg-teal-700 text-white">Save invite</Button>
               </div>
             </form>
           </div>

@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, Check, Clock, Plus, Trash2, X } from 'lucide-react';
+import { AlertTriangle, ChevronLeft, Check, Clock, Plus, Trash2, X } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard-layout';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/app-store';
 
 export default function RemindersPage() {
-  const { todayReminders, medicines, members, getMember, markDose, deleteReminder, addReminder, calendarUrlForMedicine } = useAppStore();
+  const { todayReminders, medicines, members, getMember, markDose, deleteReminder, addReminder, calendarUrlForMedicine, lowStockMedicines } = useAppStore();
   const [medicineId, setMedicineId] = useState(medicines[0]?.id ?? '');
   const [time, setTime] = useState('08:00');
 
@@ -33,13 +33,13 @@ export default function RemindersPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         <div className="flex items-center gap-4">
           <button onClick={() => window.history.back()} className="p-2 hover:bg-slate-100 rounded-lg transition">
             <ChevronLeft className="w-6 h-6" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Reminders</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Reminders</h1>
             <p className="text-slate-600 mt-1">Track pill reminders and send them to Google Calendar.</p>
           </div>
         </div>
@@ -158,6 +158,28 @@ export default function RemindersPage() {
                     Save reminder
                   </Button>
                 </form>
+              )}
+            </div>
+
+            <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-4">
+              <h2 className="font-bold text-slate-900 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-amber-600" />
+                Restock alerts
+              </h2>
+              {lowStockMedicines.length === 0 ? (
+                <p className="text-sm text-slate-600">No low-stock medicines right now.</p>
+              ) : (
+                <div className="space-y-3">
+                  {lowStockMedicines.map((medicine) => (
+                    <div key={medicine.id} className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                      <p className="text-sm font-semibold text-slate-900">{medicine.name}</p>
+                      <p className="text-xs text-slate-600">{medicine.quantity} {medicine.unit} left. Restock threshold is {medicine.lowStockAt}.</p>
+                    </div>
+                  ))}
+                  <Button asChild variant="outline" className="w-full border-amber-300 text-amber-800 hover:bg-amber-50">
+                    <Link href="/purchase-list">Open purchase list</Link>
+                  </Button>
+                </div>
               )}
             </div>
 

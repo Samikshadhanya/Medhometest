@@ -12,9 +12,9 @@ export async function PATCH(request: Request, context: RouteContext) {
     const token = await requireAuth(request);
     const { id } = await context.params;
     const body = await readJson(request);
-    const reminder = await updateReminder(token.uid, id, body);
+    const result = await updateReminder(token.uid, id, body);
 
-    return jsonOk({ reminder });
+    return jsonOk(result);
   } catch (error) {
     return handleApiError(error);
   }

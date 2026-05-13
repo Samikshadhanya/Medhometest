@@ -44,24 +44,24 @@ export default function Header({ onMenuClick }: HeaderProps) {
   ];
 
   return (
-    <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-      <div className="flex items-center gap-4">
+    <header className="shrink-0 bg-white border-b border-slate-200 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] md:px-6 md:py-4 flex items-center justify-between gap-3">
+      <div className="min-w-0 flex items-center gap-2 md:gap-4">
         <button onClick={onMenuClick} className="md:hidden p-2 hover:bg-slate-100 rounded-lg transition">
           <Menu className="w-6 h-6" />
         </button>
 
-        <div className="relative flex items-center gap-2">
+        <div className="relative flex min-w-0 items-center gap-2">
           <span className="text-sm text-slate-600 hidden sm:block">Selected Household</span>
           <button 
             onClick={() => setShowHouseholdMenu(!showHouseholdMenu)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition font-medium text-slate-900"
+            className="min-w-0 flex items-center gap-1 px-2 py-1.5 md:px-3 rounded-lg hover:bg-slate-100 transition font-medium text-slate-900"
           >
-            {user.household}
+            <span className="truncate max-w-[9rem] sm:max-w-[14rem]">{user.household}</span>
             <ChevronDown className="w-4 h-4" />
           </button>
 
           {showHouseholdMenu && (
-            <div className="absolute top-full left-0 sm:left-auto mt-2 w-64 bg-white rounded-lg shadow-lg border border-slate-200 z-20">
+            <div className="absolute top-full left-0 sm:left-auto mt-2 w-[min(20rem,calc(100vw-2rem))] bg-white rounded-lg shadow-lg border border-slate-200 z-20">
               <div className="p-2 space-y-1">
                 <p className="text-xs font-semibold text-slate-500 px-2 py-1">Switch Household</p>
                 {user.households?.map((hh) => (
@@ -118,7 +118,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex shrink-0 items-center gap-2 md:gap-4">
 
         <div className="relative">
           <button 
@@ -130,7 +130,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
           </button>
 
           {showNotificationsMenu && (
-            <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-slate-200 z-30 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="absolute right-0 mt-2 w-[min(20rem,calc(100vw-1rem))] bg-white rounded-lg shadow-xl border border-slate-200 z-30 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
                 <h3 className="font-semibold text-slate-900">Notifications</h3>
                 <span className="text-xs font-medium bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">{notifications.length} New</span>

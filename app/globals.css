@@ -116,12 +116,32 @@
 }
 
 @layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
   }
+}
+
+.app-shell {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.app-content {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 nextjs-portal,

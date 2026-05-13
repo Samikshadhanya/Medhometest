@@ -39,18 +39,18 @@ export default function InventoryPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between gap-4">
+      <div className="p-4 md:p-6 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
             <button onClick={() => window.history.back()} className="p-2 hover:bg-slate-100 rounded-lg transition">
               <ChevronLeft className="w-6 h-6" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">Medicine Inventory</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Medicine Inventory</h1>
               <p className="text-slate-600 mt-1">Manage medicines across the household.</p>
             </div>
           </div>
-          <Button onClick={() => setShowForm((current) => !current)} className="bg-teal-600 hover:bg-teal-700">
+          <Button onClick={() => setShowForm((current) => !current)} className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700">
             <Plus className="w-4 h-4" />
             Add Medicine
           </Button>
@@ -106,7 +106,7 @@ function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="bg-white border border-slate-200 rounded-lg p-4">
       <p className="text-sm text-slate-500">{label}</p>
-      <p className="text-3xl font-bold text-slate-900 mt-1">{value}</p>
+      <p className="text-2xl md:text-3xl font-bold text-slate-900 mt-1">{value}</p>
     </div>
   );
 }

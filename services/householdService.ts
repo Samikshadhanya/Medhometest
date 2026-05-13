@@ -20,3 +20,10 @@ export async function createHousehold(name: string) {
 export async function getHousehold(id: string) {
   return apiRequest<{ household: Household }>(`/api/households/${id}`);
 }
+
+export async function setActiveHousehold(activeHouseholdId: string) {
+  return apiRequest<{ ok: true }>('/api/users/profile', {
+    method: 'PATCH',
+    body: { activeHouseholdId },
+  });
+}

@@ -40,7 +40,7 @@ export default function MedicineTable({ medicines, showDelete = false }: Medicin
 
               return (
                 <tr key={medicine.id} className="border-b border-slate-200 hover:bg-slate-50 transition">
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-4 md:px-6">
                     <div className="flex items-center gap-3">
                       <img src={medicine.image} alt={medicine.name} className="w-10 h-10 rounded object-cover" />
                       <div>
@@ -49,16 +49,16 @@ export default function MedicineTable({ medicines, showDelete = false }: Medicin
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-slate-600">{member ? `${member.name} (${member.role})` : 'Unassigned'}</td>
-                  <td className="px-6 py-4 text-slate-600">
+                  <td className="px-4 py-4 md:px-6 text-slate-600">{member ? `${member.name} (${member.role})` : 'Unassigned'}</td>
+                  <td className="px-4 py-4 md:px-6 text-slate-600">
                     {medicine.quantity} {medicine.unit}
                     {medicine.quantity <= medicine.lowStockAt && <p className="text-xs text-red-600 mt-1">Low stock</p>}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-4 md:px-6">
                     <span className={urgent ? 'text-orange-600' : 'text-slate-600'}>{medicine.expiryDate}</span>
                     <p className="text-xs text-slate-500 mt-1">{daysLeft} days left</p>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-4 md:px-6">
                     <div className="flex items-center justify-center gap-2">
                       <Button asChild variant="outline" size="sm" className="text-teal-600 border-teal-600 hover:bg-teal-50">
                         <a href={calendarUrlForMedicine(medicine)} target="_blank" rel="noreferrer">

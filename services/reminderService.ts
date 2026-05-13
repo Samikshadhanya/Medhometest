@@ -1,4 +1,4 @@
-import type { ReminderInput, ReminderLog } from '@/lib/types';
+import type { Medicine, ReminderInput, ReminderLog } from '@/lib/types';
 import { apiRequest } from '@/services/apiClient';
 
 type CreateReminderPayload = ReminderInput & {
@@ -22,7 +22,7 @@ export async function createReminder(reminder: CreateReminderPayload) {
 }
 
 export async function updateReminder(id: string, reminder: Partial<ReminderLog>) {
-  return apiRequest<{ reminder: ReminderLog }>(`/api/reminders/${id}`, {
+  return apiRequest<{ reminder: ReminderLog; medicine?: Medicine }>(`/api/reminders/${id}`, {
     method: 'PATCH',
     body: reminder,
   });

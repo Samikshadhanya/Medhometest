@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { medicineImage } from '@/lib/initial-data';
 import { adminDb } from '@/lib/firebase-admin';
 import { ApiError } from '@/lib/server/api';
-import type { FamilyMember, Household, Medicine, ReminderDocument, ReminderLog, UserProfile } from '@/lib/types';
+import type { Caregiver, FamilyMember, Household, Medicine, ReminderDocument, ReminderLog, UserProfile } from '@/lib/types';
 
 const householdSchema = z.object({
   name: z.string().trim().min(1, 'Household name is required.').max(120),
@@ -45,6 +45,18 @@ const reminderPatchSchema = z.object({
   status: z.enum(['taken', 'missed', 'upcoming']).optional(),
   time: z.string().trim().regex(/^\d{2}:\d{2}$/).optional(),
   takenAt: z.string().datetime().nullable().optional(),
+});
+
+const caregiverSchema = z.object({
+  householdId: z.string().trim().min(1, 'householdId is required.'),
+  name: z.string().trim().min(1, 'Caregiver name is required.').max(120),
+  relationship: z.string().trim().min(1).max(80),
+  accessLevel: z.string().trim().min(1).max(80),
+  status: z.enum(['Active', 'Invited']).default('Invited'),
+});
+
+const activeHouseholdSchema = z.object({
+  activeHouseholdId: z.string().trim().min(1, 'activeHouseholdId is required.'),
 });
 
 type CreateHouseholdPayload = z.infer<typeof householdSchema>;
@@ -117,6 +129,17 @@ function serializeFamilyMember(id: string, data: FirebaseFirestore.DocumentData)
     image: data.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name || 'User')}&background=0f766e&color=fff`,
     healthNotes: data.healthNotes || [],
     knownAllergies: data.knownAllergies || 'None known',
+  };
+}
+
+function serializeCaregiver(id: string, data: FirebaseFirestore.DocumentData): Caregiver {
+  return {
+    id,
+    householdId: data.householdId,
+    name: data.name || '',
+    relationship: data.relationship || 'Caregiver',
+    accessLevel: data.accessLevel || 'Reminder Access',
+    status: data.status || 'Invited',
   };
 }
 
@@ -247,6 +270,22 @@ export async function getProfileBundle(uid: string, fallback: { email?: string; 
   const familyMembers = activeHouseholdId ? await getFamilyMembersByHousehold(uid, activeHouseholdId) : [];
 
   return { profile, household, households, familyMembers };
+}
+
+export async function setActiveHousehold(uid: string, payload: unknown) {
+  const parsed = activeHouseholdSchema.safeParse(payload);
+  if (!parsed.success) {
+    throw new ApiError(400, parsed.error.issues[0]?.message || 'Invalid household payload.');
+  }
+
+  await assertHouseholdAccess(uid, parsed.data.activeHouseholdId);
+  await adminDb.collection('users').doc(uid).set(
+    {
+      activeHouseholdId: parsed.data.activeHouseholdId,
+      updatedAt: FieldValue.serverTimestamp(),
+    },
+    { merge: true },
+  );
 }
 
 export async function getHousehold(uid: string, householdId: string) {
@@ -402,11 +441,41 @@ export async function updateReminder(uid: string, reminderId: string, payload: u
     throw new ApiError(404, 'Reminder not found.');
   }
 
-  await assertHouseholdAccess(uid, reminderSnap.data()!.householdId);
-  await reminderRef.update({ ...parsed.data, updatedAt: FieldValue.serverTimestamp() });
+  const existingReminder = reminderSnap.data()!;
+  await assertHouseholdAccess(uid, existingReminder.householdId);
+
+  let medicine: Medicine | undefined;
+  await adminDb.runTransaction(async (transaction) => {
+    const currentReminderSnap = await transaction.get(reminderRef);
+    if (!currentReminderSnap.exists) {
+      throw new ApiError(404, 'Reminder not found.');
+    }
+
+    const currentReminder = currentReminderSnap.data()!;
+    const nextStatus = parsed.data.status;
+    const medicineRef = adminDb.collection('medicines').doc(currentReminder.medicineId);
+    const shouldTake = nextStatus === 'taken' && currentReminder.status !== 'taken';
+    const shouldUndoTake = currentReminder.status === 'taken' && nextStatus && nextStatus !== 'taken';
+
+    if (shouldTake || shouldUndoTake) {
+      const medicineSnap = await transaction.get(medicineRef);
+      if (medicineSnap.exists) {
+        const medicineData = medicineSnap.data()!;
+        const currentQuantity = Number(medicineData.quantity || 0);
+        const nextQuantity = shouldTake ? Math.max(0, currentQuantity - 1) : currentQuantity + 1;
+        transaction.update(medicineRef, {
+          quantity: nextQuantity,
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+        medicine = serializeMedicine(medicineSnap.id, { ...medicineData, quantity: nextQuantity });
+      }
+    }
+
+    transaction.update(reminderRef, { ...parsed.data, updatedAt: FieldValue.serverTimestamp() });
+  });
 
   const updated = await reminderRef.get();
-  return serializeReminder(updated.id, updated.data()!);
+  return { reminder: serializeReminder(updated.id, updated.data()!), medicine };
 }
 
 export async function deleteReminder(uid: string, reminderId: string) {
@@ -425,4 +494,42 @@ export async function getFamilyMembersByHousehold(uid: string, householdId: stri
 
   const snapshot = await adminDb.collection('members').where('householdId', '==', householdId).get();
   return snapshot.docs.map((doc) => serializeFamilyMember(doc.id, doc.data())).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export async function getCaregiversByHousehold(uid: string, householdId: string) {
+  await assertHouseholdAccess(uid, householdId);
+
+  const snapshot = await adminDb.collection('caregivers').where('householdId', '==', householdId).get();
+  return snapshot.docs.map((doc) => serializeCaregiver(doc.id, doc.data())).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export async function addCaregiver(uid: string, payload: unknown) {
+  const parsed = caregiverSchema.safeParse(payload);
+  if (!parsed.success) {
+    throw new ApiError(400, parsed.error.issues[0]?.message || 'Invalid caregiver payload.');
+  }
+
+  const input = parsed.data;
+  await assertHouseholdAccess(uid, input.householdId);
+
+  const caregiverRef = adminDb.collection('caregivers').doc();
+  await caregiverRef.set({
+    ...input,
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+
+  const created = await caregiverRef.get();
+  return serializeCaregiver(created.id, created.data()!);
+}
+
+export async function deleteCaregiver(uid: string, caregiverId: string) {
+  const caregiverRef = adminDb.collection('caregivers').doc(caregiverId);
+  const caregiverSnap = await caregiverRef.get();
+  if (!caregiverSnap.exists) {
+    throw new ApiError(404, 'Caregiver not found.');
+  }
+
+  await assertHouseholdAccess(uid, caregiverSnap.data()!.householdId);
+  await caregiverRef.delete();
 }

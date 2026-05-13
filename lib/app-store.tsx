@@ -1,14 +1,15 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
 import { initialState, medicineImage } from '@/lib/initial-data';
 import type { AppState, AppUser, Caregiver, FamilyMember, Household, Medicine, MedicineInput, MemberInput, ReminderInput, ReminderLog } from '@/lib/types';
 import { auth, db, googleProvider } from '@/lib/firebase';
-import { createHousehold, fetchUserProfile } from '@/services/householdService';
+import { createHousehold, fetchUserProfile, setActiveHousehold } from '@/services/householdService';
 import { createMedicine, deleteMedicine as deleteMedicineRequest, fetchMedicines, updateMedicine as updateMedicineRequest } from '@/services/medicineService';
 import { createReminder, deleteReminder as deleteReminderRequest, fetchReminders, updateReminder as updateReminderRequest } from '@/services/reminderService';
+import { createCaregiver, deleteCaregiver as deleteCaregiverRequest, fetchCaregivers } from '@/services/caregiverService';
 
 export type { AppState, AppUser, Caregiver, FamilyMember, Medicine, MedicineInput, MemberInput, ReminderInput, ReminderLog };
 
@@ -52,6 +53,19 @@ const daysUntil = (date: string) => {
   return Math.ceil((target.getTime() - today.getTime()) / 86400000);
 };
 
+const withTimeout = async <T,>(promise: Promise<T>, milliseconds: number, message: string): Promise<T> => {
+  let timeoutId: number | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = window.setTimeout(() => reject(new Error(message)), milliseconds);
+  });
+
+  try {
+    return await Promise.race([promise, timeout]);
+  } finally {
+    if (timeoutId) window.clearTimeout(timeoutId);
+  }
+};
+
 const userFromProfile = (
   profile: Awaited<ReturnType<typeof fetchUserProfile>>['profile'],
   household: Household | null,
@@ -78,15 +92,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const loadHouseholdData = useCallback(async (householdId?: string) => {
     if (!householdId || !auth.currentUser) return;
 
-    const [medicineResult, reminderResult] = await Promise.all([
+    const [medicineResult, reminderResult, caregiverResult] = await Promise.all([
       fetchMedicines(householdId),
       fetchReminders({ householdId }),
+      fetchCaregivers(householdId),
     ]);
 
     setState((current) => ({
       ...current,
       medicines: medicineResult.medicines,
       reminderLogs: reminderResult.reminders,
+      caregivers: caregiverResult.caregivers,
     }));
   }, []);
 
@@ -120,7 +136,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
       try {
         setLoading(true);
-        await loadAuthenticatedUser();
+        await withTimeout(loadAuthenticatedUser(), 15000, 'Firebase sign-in succeeded, but loading household data timed out. Please refresh or check the deployment Firebase settings.');
       } catch (loadError) {
         const message = loadError instanceof Error ? loadError.message : 'Failed to load your MedHome data.';
         setError(message);
@@ -229,8 +245,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       switchHousehold: async (newHousehold) => {
         const index = state.user.households?.findIndex((name) => name === newHousehold) ?? -1;
         const nextHouseholdId = index >= 0 ? state.user.householdIds?.[index] : undefined;
-        setState((current) => ({ ...current, user: { ...current.user, household: newHousehold, householdId: nextHouseholdId || current.user.householdId } }));
-        if (nextHouseholdId && !isLocalSession) await loadHouseholdData(nextHouseholdId);
+        setState((current) => ({
+          ...current,
+          user: { ...current.user, household: newHousehold, householdId: nextHouseholdId || current.user.householdId },
+          medicines: [],
+          reminderLogs: [],
+          caregivers: [],
+        }));
+        if (nextHouseholdId && !isLocalSession) {
+          await setActiveHousehold(nextHouseholdId);
+          await loadHouseholdData(nextHouseholdId);
+        }
       },
       addHousehold: async (newHousehold) => {
         if (isLocalSession) {
@@ -362,22 +387,40 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (isLocalSession) {
           setState((current) => ({
             ...current,
+            medicines: current.medicines.map((medicine) => {
+              const reminder = current.reminderLogs.find((item) => item.id === id);
+              if (!reminder || reminder.medicineId !== medicine.id) return medicine;
+              if (status === 'taken' && reminder.status !== 'taken') {
+                return { ...medicine, quantity: Math.max(0, medicine.quantity - 1) };
+              }
+              if (reminder.status === 'taken' && status !== 'taken') {
+                return { ...medicine, quantity: medicine.quantity + 1 };
+              }
+              return medicine;
+            }),
             reminderLogs: current.reminderLogs.map((item) => item.id === id ? { ...item, status, takenAt } : item),
           }));
           return;
         }
 
         const result = await updateReminderRequest(id, { status, takenAt });
-        setState((current) => ({ ...current, reminderLogs: current.reminderLogs.map((item) => item.id === id ? result.reminder : item) }));
+        setState((current) => ({
+          ...current,
+          medicines: result.medicine
+            ? current.medicines.map((item) => item.id === result.medicine?.id ? result.medicine : item)
+            : current.medicines,
+          reminderLogs: current.reminderLogs.map((item) => item.id === id ? result.reminder : item),
+        }));
       },
       addCaregiver: async (caregiver) => {
         if (isLocalSession) {
-          setState((current) => ({ ...current, caregivers: [...current.caregivers, { ...caregiver, id: newLocalId('caregiver'), status: 'Active' }] }));
+          setState((current) => ({ ...current, caregivers: [...current.caregivers, { ...caregiver, id: newLocalId('caregiver'), householdId, status: 'Invited' }] }));
           return;
         }
 
-        const docRef = await addDoc(collection(db, 'caregivers'), { ...caregiver, householdId, status: 'Active' });
-        setState((current) => ({ ...current, caregivers: [...current.caregivers, { ...caregiver, id: docRef.id, status: 'Active' }] }));
+        if (!householdId) throw new Error('No active household selected.');
+        const result = await createCaregiver({ ...caregiver, householdId, status: 'Invited' });
+        setState((current) => ({ ...current, caregivers: [...current.caregivers, result.caregiver] }));
       },
       removeCaregiver: async (id) => {
         if (isLocalSession) {
@@ -385,7 +428,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        await deleteDoc(doc(db, 'caregivers', id));
+        await deleteCaregiverRequest(id);
         setState((current) => ({ ...current, caregivers: current.caregivers.filter((item) => item.id !== id) }));
       },
       getMember: (id) => state.members.find((member) => member.id === id),

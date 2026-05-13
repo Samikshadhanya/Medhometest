@@ -9,13 +9,13 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         <div className="flex items-center gap-4">
           <button onClick={() => window.history.back()} className="p-2 hover:bg-slate-100 rounded-lg transition">
             <ChevronLeft className="w-6 h-6" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Settings</h1>
             <p className="text-slate-600 mt-1">Manage account, login providers, and calendar sync.</p>
           </div>
         </div>

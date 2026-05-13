@@ -18,9 +18,9 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Today at a glance</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Today at a glance</h1>
           <p className="text-slate-600 mt-1">Here is what is happening with your family medicines.</p>
         </div>
 
@@ -35,7 +35,7 @@ export default function DashboardPage() {
               >
                 <div className="flex items-center justify-between">
                   <Icon className="w-5 h-5 text-teal-600" />
-                  <span className="text-3xl font-bold text-slate-900">{card.value}</span>
+                  <span className="text-2xl md:text-3xl font-bold text-slate-900">{card.value}</span>
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900">{card.label}</h3>
@@ -53,7 +53,7 @@ export default function DashboardPage() {
                 <Package className="w-5 h-5 text-teal-600" />
                 Quick Actions
               </h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Link href="/inventory" className="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:bg-slate-50 transition">
                   <div className="w-10 h-10 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center">
                     <Package className="w-5 h-5" />

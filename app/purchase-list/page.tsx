@@ -10,13 +10,13 @@ export default function PurchaseListPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         <div className="flex items-center gap-4">
           <button onClick={() => window.history.back()} className="p-2 hover:bg-slate-100 rounded-lg transition">
             <ChevronLeft className="w-6 h-6" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Purchase List</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Purchase List</h1>
             <p className="text-slate-600 mt-1">Medicines that need restocking soon.</p>
           </div>
         </div>
@@ -29,7 +29,7 @@ export default function PurchaseListPage() {
               {purchaseList.map((medicine) => {
                 const member = getMember(medicine.assignedToId);
                 return (
-                  <div key={medicine.id} className="p-5 flex items-center justify-between gap-4">
+                  <div key={medicine.id} className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <img src={medicine.image} alt={medicine.name} className="w-12 h-12 rounded object-cover" />
                       <div>
@@ -38,7 +38,7 @@ export default function PurchaseListPage() {
                         <p className="text-xs text-slate-500">Reorder 2 days before expected shortage.</p>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
                       <Button
                         onClick={() => updateMedicine(medicine.id, { quantity: medicine.quantity + 30 })}
                         className="bg-teal-600 hover:bg-teal-700"
