@@ -55,13 +55,6 @@ const localProviders = new Set<AppUser['authProvider']>(['guest']);
 
 const newLocalId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-const daysUntil = (date: string) => {
-  const target = new Date(`${date}T00:00:00`);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return Math.ceil((target.getTime() - today.getTime()) / 86400000);
-};
-
 const userFromProfile = (
   profile: Awaited<ReturnType<typeof fetchUserProfile>>['profile'],
   household: Household | null,
@@ -121,34 +114,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [loadHouseholdData]);
 
   useEffect(() => {
-    let active = true;
-    let handledInitialAuth = false;
-
-    async function handleAuthUser(uid: string) {
-      try {
-        setLoading(true);
-        await loadAuthenticatedUser(uid);
-      } catch (loadError) {
-        const message = loadError instanceof Error ? loadError.message : 'Failed to load your MedHome data.';
-        setError(
-          message === 'Request failed.'
-            ? 'Could not load cloud household data. You can sign in again or continue as guest.'
-            : message,
-        );
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    }
-
     function handleSignedOut() {
       setState(initialState);
       setLoading(false);
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      handledInitialAuth = true;
       setError(null);
 
       if (!firebaseUser) {
@@ -168,7 +139,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
-      active = false;
       unsubscribe();
     };
   }, [loadAuthenticatedUser]);

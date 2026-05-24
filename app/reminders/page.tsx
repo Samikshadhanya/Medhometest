@@ -2,15 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { AlertTriangle, ChevronLeft, Check, Clock, Plus, Trash2, X } from 'lucide-react';
 import { AlertTriangle, CalendarClock, ChevronLeft, Check, Clock, Plus, Trash2, X } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard-layout';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/app-store';
 
 export default function RemindersPage() {
-  const { todayReminders, medicines, members, getMember, markDose, deleteReminder, addReminder, calendarUrlForMedicine, lowStockMedicines } = useAppStore();
-  const { todayReminders, medicines, members, getMember, markDose, deleteReminder, addReminder, calendarUrlForMedicine, expiringMedicines } = useAppStore();
+  const { todayReminders, medicines, members, getMember, markDose, deleteReminder, addReminder, calendarUrlForMedicine, expiringMedicines, lowStockMedicines } = useAppStore();
   const [medicineId, setMedicineId] = useState(medicines[0]?.id ?? '');
   const [time, setTime] = useState('08:00');
 

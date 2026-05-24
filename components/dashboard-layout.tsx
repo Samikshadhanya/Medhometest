@@ -22,31 +22,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }, []);
 
   return (
-    <div className="app-shell flex bg-slate-50">
-      <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
-
-      <div className="min-w-0 flex-1 flex flex-col overflow-hidden">
-        <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-
-        <main className="min-h-0 flex-1 overflow-auto app-content">
-          {children}
-        </main>
-    setSidebarOpen(window.innerWidth >= 768);
-  }, []);
-
-  return (
     <ProtectedRoute>
-      <div className="flex h-screen bg-slate-50">
-        {/* Sidebar */}
+      <div className="app-shell flex bg-slate-50">
         <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
 
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Header */}
+        <div className="min-w-0 flex-1 flex flex-col overflow-hidden">
           <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
-          {/* Content */}
-          <main className="flex-1 overflow-auto">
+          <main className="min-h-0 flex-1 overflow-auto app-content">
             {children}
           </main>
         </div>

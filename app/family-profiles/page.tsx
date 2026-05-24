@@ -24,28 +24,9 @@ export default function FamilyProfilePage() {
   const { members, medicines, todayReminders, caregivers, addCaregiver, removeCaregiver } = store;
   
   const [selectedMemberId, setSelectedMemberId] = useState(members[0]?.id ?? '');
-  const [isCreatingProfile, setIsCre  atingProfile] = useState(false);
+  const [isCreatingProfile, setIsCreatingProfile] = useState(false);
   const [isAddingMedicine, setIsAddingMedicine] = useState(false);
-  const [isInvitingCaregiver, setIsInvitingCaregiver] = useState(false);
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [medicineFormError, setMedicineFormError] = useState('');
-  const [caregiverForm, setCaregiverForm] = useState({
-    name: '',
-    relationship: '',
-    phone: '',
-    email: '',
-    accessLevel: 'Reminder Access',
-    availability: '',
-    notes: '',
-  });
-  const [editProfileForm, setEditProfileForm] = useState({
-    name: '',
-    role: '',
-    age: '',
-    gender: 'Unspecified',
-    knownAllergies: '',
-    healthNotes: '',
-  });
   
   // New profile form state
   const [newName, setNewName] = useState('');
@@ -54,11 +35,6 @@ export default function FamilyProfilePage() {
   const [newGender, setNewGender] = useState('Unspecified');
   const [newAllergies, setNewAllergies] = useState('');
   const [newHealthNotes, setNewHealthNotes] = useState('');
-  const [caregiverForm, setCaregiverForm] = useState({
-    name: '',
-    relationship: '',
-    accessLevel: 'Reminder Access',
-  });
   const [medicineForm, setMedicineForm] = useState({
     name: '',
     category: 'Prescription',
@@ -201,7 +177,6 @@ export default function FamilyProfilePage() {
                       <p className="text-sm text-slate-600">{selectedMember.role}{selectedMember.age !== 'Unspecified' ? `, age ${selectedMember.age}` : ''}</p>
                       <p className="text-xs text-slate-500">{selectedMember.gender === 'Unspecified' ? 'Details not added yet' : selectedMember.gender}</p>
                     </div>
-                    <Button onClick={openEditProfile} size="sm" variant="outline" className="shrink-0 border-teal-200 text-teal-700 hover:bg-teal-50">Edit</Button>
                   </div>
                 )}
               </div>
@@ -510,37 +485,6 @@ function isFutureDate(date: string) {
   today.setHours(0, 0, 0, 0);
   const target = new Date(`${date}T00:00:00`);
   return target.getTime() > today.getTime();
-}
-
-function ProfileField({
-  label,
-  value,
-  onChange,
-  type = 'text',
-  placeholder,
-  required,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  type?: string;
-  placeholder?: string;
-  required?: boolean;
-}) {
-  return (
-    <label className="space-y-2 text-sm font-medium text-slate-700 block">
-      {label}
-      <input
-        required={required}
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={(event) => onChange(event.target.value)}
-        onInput={(event) => onChange(event.currentTarget.value)}
-        className="w-full border border-slate-300 rounded-lg px-3 py-2"
-      />
-    </label>
-  );
 }
 
 function MedicineField({

@@ -11,9 +11,13 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick }: HeaderProps) {
   const router = useRouter();
-  const { user, signOut, todayReminders, lowStockMedicines, expiringMedicines } = useAppStore();
+  const { user, signOut, todayReminders, lowStockMedicines, expiringMedicines, switchHousehold, addHousehold } = useAppStore();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotificationsMenu, setShowNotificationsMenu] = useState(false);
+  const [showHouseholdMenu, setShowHouseholdMenu] = useState(false);
+  const [newHouseholdName, setNewHouseholdName] = useState('');
+  const [addingHousehold, setAddingHousehold] = useState(false);
+  const [householdError, setHouseholdError] = useState('');
 
   const notifications = [
     ...todayReminders.filter((reminder) => reminder.status === 'missed').map((reminder) => ({
@@ -111,6 +115,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
               </div>
             </div>
           )}
+        </div>
         <div className="flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-sm text-slate-700">
           <Home className="w-4 h-4 text-teal-600" />
           <span className="font-medium text-slate-900">Your household</span>
