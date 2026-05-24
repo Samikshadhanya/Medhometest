@@ -24,9 +24,28 @@ export default function FamilyProfilePage() {
   const { members, medicines, todayReminders, caregivers, addCaregiver, removeCaregiver } = store;
   
   const [selectedMemberId, setSelectedMemberId] = useState(members[0]?.id ?? '');
-  const [isCreatingProfile, setIsCreatingProfile] = useState(false);
+  const [isCreatingProfile, setIsCre  atingProfile] = useState(false);
   const [isAddingMedicine, setIsAddingMedicine] = useState(false);
   const [isInvitingCaregiver, setIsInvitingCaregiver] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [medicineFormError, setMedicineFormError] = useState('');
+  const [caregiverForm, setCaregiverForm] = useState({
+    name: '',
+    relationship: '',
+    phone: '',
+    email: '',
+    accessLevel: 'Reminder Access',
+    availability: '',
+    notes: '',
+  });
+  const [editProfileForm, setEditProfileForm] = useState({
+    name: '',
+    role: '',
+    age: '',
+    gender: 'Unspecified',
+    knownAllergies: '',
+    healthNotes: '',
+  });
   
   // New profile form state
   const [newName, setNewName] = useState('');
@@ -72,6 +91,8 @@ export default function FamilyProfilePage() {
     return profileMedicines.filter((medicine) => allergyText !== 'none known' && allergyText !== '' && medicine.name.toLowerCase().includes(allergyText));
   }, [profileMedicines, selectedMember]);
 
+  const minExpiryDate = getTomorrowDate();
+
   const handleCreateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName.trim()) return;
@@ -98,7 +119,12 @@ export default function FamilyProfilePage() {
   const handleAddMedicine = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!selectedMember?.id || !medicineForm.name.trim()) return;
+    if (!isFutureDate(medicineForm.expiryDate)) {
+      setMedicineFormError('Choose an expiry date after today.');
+      return;
+    }
 
+    setMedicineFormError('');
     await store.addMedicine({
       ...medicineForm,
       name: medicineForm.name.trim(),
@@ -123,20 +149,6 @@ export default function FamilyProfilePage() {
       reminderTimes: '08:00',
       lowStockAt: 5,
     });
-  };
-
-  const handleInviteCaregiver = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!caregiverForm.name.trim() || !caregiverForm.relationship.trim()) return;
-
-    await addCaregiver({
-      name: caregiverForm.name.trim(),
-      relationship: caregiverForm.relationship.trim(),
-      accessLevel: caregiverForm.accessLevel,
-    });
-
-    setCaregiverForm({ name: '', relationship: '', accessLevel: 'Reminder Access' });
-    setIsInvitingCaregiver(false);
   };
 
   return (
@@ -184,11 +196,12 @@ export default function FamilyProfilePage() {
                 {selectedMember && (
                   <div className="flex items-center gap-3 mt-5 p-3 bg-white rounded-lg border border-teal-100 shadow-sm">
                     <img src={selectedMember.image} alt={selectedMember.name} className="w-14 h-14 rounded-full object-cover border-2 border-teal-100" />
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <h2 className="font-bold text-slate-900">{selectedMember.name}</h2>
-                      <p className="text-sm text-slate-600">{selectedMember.role}, age {selectedMember.age}</p>
-                      <p className="text-xs text-slate-500">{selectedMember.gender}</p>
+                      <p className="text-sm text-slate-600">{selectedMember.role}{selectedMember.age !== 'Unspecified' ? `, age ${selectedMember.age}` : ''}</p>
+                      <p className="text-xs text-slate-500">{selectedMember.gender === 'Unspecified' ? 'Details not added yet' : selectedMember.gender}</p>
                     </div>
+                    <Button onClick={openEditProfile} size="sm" variant="outline" className="shrink-0 border-teal-200 text-teal-700 hover:bg-teal-50">Edit</Button>
                   </div>
                 )}
               </div>
@@ -311,11 +324,13 @@ export default function FamilyProfilePage() {
                       <div>
                         <p className="font-medium text-slate-900">{caregiver.name}</p>
                         <p className="text-sm text-slate-500">{caregiver.relationship} - {caregiver.accessLevel}</p>
+                        {(caregiver.phone || caregiver.email) && <p className="text-xs text-slate-500">{[caregiver.phone, caregiver.email].filter(Boolean).join(' - ')}</p>}
+                        {caregiver.notes && <p className="text-xs text-slate-500 mt-1">{caregiver.notes}</p>}
                       </div>
                       <Button onClick={() => removeCaregiver(caregiver.id)} size="sm" variant="outline">Remove</Button>
                     </div>
                   ))}
-                  <Button onClick={() => setIsInvitingCaregiver(true)} className="w-full bg-slate-100 text-slate-900 hover:bg-slate-200 shadow-none border border-slate-200">
+                  <Button onClick={() => addCaregiver({ name: 'New Caregiver', relationship: 'Family', accessLevel: 'Reminder Access' })} className="w-full bg-slate-100 text-slate-900 hover:bg-slate-200 shadow-none border border-slate-200">
                     <UserPlus className="w-4 h-4 mr-2" />
                     Invite caregiver
                   </Button>
@@ -463,62 +478,17 @@ export default function FamilyProfilePage() {
               <MedicineField label="Type" value={medicineForm.type} onChange={(value) => setMedicineForm({ ...medicineForm, type: value })} />
               <MedicineField label="Quantity" type="number" value={String(medicineForm.quantity)} onChange={(value) => setMedicineForm({ ...medicineForm, quantity: Number(value) })} />
               <MedicineField label="Unit" value={medicineForm.unit} onChange={(value) => setMedicineForm({ ...medicineForm, unit: value })} />
-              <MedicineField label="Expiry date" value={medicineForm.expiryDate} onChange={(value) => setMedicineForm({ ...medicineForm, expiryDate: value })} placeholder="YYYY-MM-DD" required />
+              <MedicineField label="Expiry date" type="date" min={minExpiryDate} value={medicineForm.expiryDate} onChange={(value) => setMedicineForm({ ...medicineForm, expiryDate: value })} required />
               <MedicineField label="Simple use" value={medicineForm.use} onChange={(value) => setMedicineForm({ ...medicineForm, use: value })} placeholder="Blood pressure, fever, etc." required />
               <MedicineField label="Dosage" value={medicineForm.dosage} onChange={(value) => setMedicineForm({ ...medicineForm, dosage: value })} />
               <MedicineField label="Meal instruction" value={medicineForm.mealInstruction} onChange={(value) => setMedicineForm({ ...medicineForm, mealInstruction: value })} />
               <MedicineField label="Reminder times" value={medicineForm.reminderTimes} onChange={(value) => setMedicineForm({ ...medicineForm, reminderTimes: value })} placeholder="08:00, 20:00" />
               <MedicineField label="Low stock at" type="number" value={String(medicineForm.lowStockAt)} onChange={(value) => setMedicineForm({ ...medicineForm, lowStockAt: Number(value) })} />
               <MedicineField label="Pharmacy / pharma" value={medicineForm.pharmaName} onChange={(value) => setMedicineForm({ ...medicineForm, pharmaName: value })} placeholder="Optional" />
+              {medicineFormError && <p className="md:col-span-3 text-sm font-medium text-red-600">{medicineFormError}</p>}
               <div className="md:col-span-3 flex justify-end gap-3 pt-2">
                 <Button type="button" variant="outline" onClick={() => setIsAddingMedicine(false)}>Cancel</Button>
                 <Button type="submit" className="bg-teal-600 hover:bg-teal-700">Save pill and reminders</Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {isInvitingCaregiver && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
-              <h2 className="text-xl font-bold text-slate-900">Invite Caregiver</h2>
-              <button onClick={() => setIsInvitingCaregiver(false)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleInviteCaregiver} className="p-5 space-y-4">
-              <MedicineField
-                label="Caregiver name"
-                value={caregiverForm.name}
-                onChange={(value) => setCaregiverForm({ ...caregiverForm, name: value })}
-                placeholder="e.g. Priya Rao"
-                required
-              />
-              <MedicineField
-                label="Relationship"
-                value={caregiverForm.relationship}
-                onChange={(value) => setCaregiverForm({ ...caregiverForm, relationship: value })}
-                placeholder="e.g. Nurse, daughter, neighbor"
-                required
-              />
-              <label className="space-y-2 text-sm font-medium text-slate-700 block">
-                Access level
-                <select
-                  value={caregiverForm.accessLevel}
-                  onChange={(event) => setCaregiverForm({ ...caregiverForm, accessLevel: event.target.value })}
-                  className="w-full border border-slate-300 rounded-lg px-3 py-2 bg-white"
-                >
-                  <option>Reminder Access</option>
-                  <option>Inventory Access</option>
-                  <option>Full Household Access</option>
-                </select>
-              </label>
-              <div className="pt-2 flex justify-end gap-3">
-                <Button type="button" variant="outline" onClick={() => setIsInvitingCaregiver(false)}>Cancel</Button>
-                <Button type="submit" className="bg-teal-600 hover:bg-teal-700 text-white">Save invite</Button>
               </div>
             </form>
           </div>
@@ -528,7 +498,21 @@ export default function FamilyProfilePage() {
   );
 }
 
-function MedicineField({
+function getTomorrowDate() {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow.toISOString().slice(0, 10);
+}
+
+function isFutureDate(date: string) {
+  if (!date) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(`${date}T00:00:00`);
+  return target.getTime() > today.getTime();
+}
+
+function ProfileField({
   label,
   value,
   onChange,
@@ -544,11 +528,45 @@ function MedicineField({
   required?: boolean;
 }) {
   return (
+    <label className="space-y-2 text-sm font-medium text-slate-700 block">
+      {label}
+      <input
+        required={required}
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        onChange={(event) => onChange(event.target.value)}
+        onInput={(event) => onChange(event.currentTarget.value)}
+        className="w-full border border-slate-300 rounded-lg px-3 py-2"
+      />
+    </label>
+  );
+}
+
+function MedicineField({
+  label,
+  value,
+  onChange,
+  type = 'text',
+  placeholder,
+  required,
+  min,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+  min?: string;
+}) {
+  return (
     <label className="space-y-2 text-sm font-medium text-slate-700">
       {label}
       <input
         required={required}
         type={type}
+        min={min}
         value={value}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}

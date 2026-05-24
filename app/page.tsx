@@ -8,10 +8,12 @@ import { useAppStore } from '@/lib/app-store';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, user } = useAppStore();
+  const { signIn, resetPassword, user } = useAppStore();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [authMessage, setAuthMessage] = useState('');
+  const [authError, setAuthError] = useState('');
   
   const [isCreateAccount, setIsCreateAccount] = useState(false);
   const [isGuestMode, setIsGuestMode] = useState(false);
@@ -21,11 +23,14 @@ export default function LoginPage() {
 
   const goToDashboard = async (provider: 'email' | 'facebook' | 'guest' | 'google') => {
     try {
-      await signIn(provider, email, guestName, guestAge, guestRole);
+      setAuthError('');
+      setAuthMessage('');
+      await signIn(provider, email, guestName, guestAge, guestRole, password, isCreateAccount);
       // Fallback manual push if the useEffect doesn't trigger fast enough
       router.push('/dashboard');
     } catch (error) {
       console.error('Sign in failed or was cancelled:', error);
+      setAuthError(error instanceof Error ? error.message : 'Could not sign in. Please try again.');
     }
   };
 
@@ -42,6 +47,17 @@ export default function LoginPage() {
       goToDashboard('guest');
     } else {
       goToDashboard('email');
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    try {
+      setAuthError('');
+      setAuthMessage('');
+      await resetPassword(email);
+      setAuthMessage('Password reset email sent. Check your inbox.');
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Could not send reset email.');
     }
   };
 
@@ -197,6 +213,8 @@ export default function LoginPage() {
               <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700">
                 {isGuestMode ? 'Enter as Guest' : (isCreateAccount ? 'Create Account' : 'Sign in')}
               </Button>
+              {authError && <p className="text-sm font-medium text-red-600">{authError}</p>}
+              {authMessage && <p className="text-sm font-medium text-teal-700">{authMessage}</p>}
             </form>
 
             {!isGuestMode && (
@@ -241,6 +259,15 @@ export default function LoginPage() {
                     Continue as guest
                   </button>
                 </div>
+              )}
+              {!isGuestMode && (
+                <button
+                  type="button"
+                  onClick={handlePasswordReset}
+                  className="text-slate-600 hover:text-slate-900"
+                >
+                  Forgot password?
+                </button>
               )}
             </div>
           </div>

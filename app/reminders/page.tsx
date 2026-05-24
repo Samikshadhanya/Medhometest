@@ -3,12 +3,14 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { AlertTriangle, ChevronLeft, Check, Clock, Plus, Trash2, X } from 'lucide-react';
+import { AlertTriangle, CalendarClock, ChevronLeft, Check, Clock, Plus, Trash2, X } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard-layout';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/app-store';
 
 export default function RemindersPage() {
   const { todayReminders, medicines, members, getMember, markDose, deleteReminder, addReminder, calendarUrlForMedicine, lowStockMedicines } = useAppStore();
+  const { todayReminders, medicines, members, getMember, markDose, deleteReminder, addReminder, calendarUrlForMedicine, expiringMedicines } = useAppStore();
   const [medicineId, setMedicineId] = useState(medicines[0]?.id ?? '');
   const [time, setTime] = useState('08:00');
 
@@ -117,6 +119,31 @@ export default function RemindersPage() {
           </div>
 
           <div className="space-y-6">
+            <div className="bg-white rounded-lg border border-amber-200 p-5 space-y-4">
+              <h2 className="font-bold text-slate-900 flex items-center gap-2">
+                <CalendarClock className="w-5 h-5 text-amber-600" />
+                Expiry reminders
+              </h2>
+              {expiringMedicines.length === 0 ? (
+                <p className="text-sm text-slate-600">No medicines expiring in the next 30 days.</p>
+              ) : (
+                <div className="space-y-3">
+                  {expiringMedicines.map((medicine) => {
+                    const member = getMember(medicine.assignedToId);
+                    return (
+                      <div key={medicine.id} className="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2">
+                        <p className="font-medium text-slate-900 flex items-center gap-2">
+                          <AlertTriangle className="w-4 h-4 text-amber-600" />
+                          {medicine.name}
+                        </p>
+                        <p className="text-sm text-slate-600">Expires {medicine.expiryDate}{member ? ` - ${member.name}` : ''}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
             <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-4">
               <h2 className="font-bold text-slate-900 flex items-center gap-2">
                 <Plus className="w-5 h-5 text-teal-600" />

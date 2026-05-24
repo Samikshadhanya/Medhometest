@@ -3,18 +3,12 @@
 import { CalendarPlus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Medicine, useAppStore } from '@/lib/app-store';
+import { daysUntil, formatExpiryStatus } from '@/lib/date-utils';
 
 interface MedicineTableProps {
   medicines: Medicine[];
   showDelete?: boolean;
 }
-
-const daysUntil = (date: string) => {
-  const target = new Date(`${date}T00:00:00`);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return Math.ceil((target.getTime() - today.getTime()) / 86400000);
-};
 
 export default function MedicineTable({ medicines, showDelete = false }: MedicineTableProps) {
   const { getMember, deleteMedicine, calendarUrlForMedicine } = useAppStore();
@@ -56,7 +50,7 @@ export default function MedicineTable({ medicines, showDelete = false }: Medicin
                   </td>
                   <td className="px-4 py-4 md:px-6">
                     <span className={urgent ? 'text-orange-600' : 'text-slate-600'}>{medicine.expiryDate}</span>
-                    <p className="text-xs text-slate-500 mt-1">{daysLeft} days left</p>
+                    <p className="text-xs text-slate-500 mt-1">{formatExpiryStatus(medicine.expiryDate)}</p>
                   </td>
                   <td className="px-4 py-4 md:px-6">
                     <div className="flex items-center justify-center gap-2">

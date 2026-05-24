@@ -4,12 +4,19 @@ import { AppProvider } from '@/lib/app-store'
 import './globals.css'
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
   title: 'MedHome',
   description: 'Family medicine inventory, reminders, and restock planning',
+  openGraph: {
+    title: 'MedHome',
+    description: 'Family medicine inventory, reminders, and restock planning',
+    type: 'website',
+    images: ['/icon.svg'],
+  },
   generator: 'MedHome',
   icons: {
     icon: '/icon.svg',
-    apple: '/apple-icon.png',
+    apple: '/placeholder-logo.png',
   },
 }
 

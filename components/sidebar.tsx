@@ -14,6 +14,7 @@ import {
   ShoppingCart,
   Users,
 } from 'lucide-react';
+import { useAppStore } from '@/lib/app-store';
 
 interface SidebarProps {
   open: boolean;
@@ -22,11 +23,13 @@ interface SidebarProps {
 
 export default function Sidebar({ open, onToggle }: SidebarProps) {
   const pathname = usePathname();
+  const { todayReminders, expiringMedicines } = useAppStore();
+  const reminderAlertCount = todayReminders.length + expiringMedicines.length;
   const menuItems = [
     { icon: LayoutGrid, label: 'Dashboard', href: '/dashboard' },
     { icon: Users, label: 'Family Profiles', href: '/family-profiles' },
     { icon: Package, label: 'Inventory', href: '/inventory' },
-    { icon: Bell, label: 'Reminders', href: '/reminders' },
+    { icon: Bell, label: 'Reminders', href: '/reminders', count: reminderAlertCount },
     { icon: ShoppingCart, label: 'Purchase List', href: '/purchase-list' },
     { icon: BarChart3, label: 'Reports', href: '/reports' },
     { icon: Settings, label: 'Settings', href: '/settings' },
@@ -39,6 +42,8 @@ export default function Sidebar({ open, onToggle }: SidebarProps) {
     <>
       <aside className={`${open ? 'translate-x-0 md:w-64' : '-translate-x-full md:translate-x-0 md:w-20'} fixed inset-y-0 left-0 z-40 flex w-[min(18rem,86vw)] flex-col bg-slate-900 text-white transition-all duration-300 md:relative md:flex-shrink-0`}>
         <div className="flex items-center justify-between border-b border-slate-800 px-4 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] md:pt-4">
+      <div className={`${open ? 'translate-x-0 w-64' : '-translate-x-full w-64 md:translate-x-0 md:w-20'} bg-slate-900 text-white transition-all duration-300 flex flex-col fixed h-full md:relative z-40`}>
+        <div className="flex items-center justify-between p-4 border-b border-slate-800">
           {open && (
             <Link href="/dashboard" onClick={closeAfterMobileNavigation} className="flex items-center gap-2 rounded hover:opacity-90">
               <div className="w-8 h-8 bg-teal-500 rounded flex items-center justify-center">
@@ -68,6 +73,11 @@ export default function Sidebar({ open, onToggle }: SidebarProps) {
               >
                 <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                 {open && <span className="text-sm font-medium">{item.label}</span>}
+                {open && item.count ? (
+                  <span className={`ml-auto rounded-full px-2 py-0.5 text-xs font-bold ${isActive ? 'bg-white text-teal-700' : 'bg-teal-500 text-white'}`}>
+                    {item.count}
+                  </span>
+                ) : null}
               </Link>
             );
           })}

@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, Bell, CalendarClock, ChevronDown, LogOut, Menu, PackageX } from 'lucide-react';
+import { AlertTriangle, Bell, CalendarClock, ChevronDown, Home, LogOut, Menu, PackageX } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/lib/app-store';
@@ -11,13 +11,9 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick }: HeaderProps) {
   const router = useRouter();
-  const { user, signOut, todayReminders, switchHousehold, addHousehold, lowStockMedicines, expiringMedicines } = useAppStore();
+  const { user, signOut, todayReminders, lowStockMedicines, expiringMedicines } = useAppStore();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showHouseholdMenu, setShowHouseholdMenu] = useState(false);
   const [showNotificationsMenu, setShowNotificationsMenu] = useState(false);
-  const [newHouseholdName, setNewHouseholdName] = useState('');
-  const [householdError, setHouseholdError] = useState('');
-  const [addingHousehold, setAddingHousehold] = useState(false);
 
   const notifications = [
     ...todayReminders.filter((reminder) => reminder.status === 'missed').map((reminder) => ({
@@ -115,6 +111,10 @@ export default function Header({ onMenuClick }: HeaderProps) {
               </div>
             </div>
           )}
+        <div className="flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-sm text-slate-700">
+          <Home className="w-4 h-4 text-teal-600" />
+          <span className="font-medium text-slate-900">Your household</span>
+          {user.household && <span className="hidden sm:inline text-slate-500">- {user.household}</span>}
         </div>
       </div>
 
@@ -199,7 +199,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
               <button
                 onClick={async () => {
                   await signOut();
-                  router.push('/');
+                  router.replace('/signin');
                 }}
                 className="w-full flex items-center gap-2 px-4 py-3 text-slate-700 hover:bg-slate-50 text-sm"
               >

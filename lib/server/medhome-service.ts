@@ -159,6 +159,10 @@ function serializeUser(uid: string, data: FirebaseFirestore.DocumentData): UserP
   };
 }
 
+function withoutUndefined<T extends Record<string, unknown>>(value: T) {
+  return Object.fromEntries(Object.entries(value).filter(([, entry]) => entry !== undefined)) as Partial<T>;
+}
+
 async function assertHouseholdAccess(uid: string, householdId: string) {
   const householdRef = adminDb.collection('households').doc(householdId);
   const householdSnap = await householdRef.get();
@@ -330,7 +334,7 @@ export async function addMedicine(uid: string, payload: unknown) {
       };
 
       transaction.set(reminderRef, {
-        ...reminder,
+        ...withoutUndefined(reminder),
         createdAt: now,
         updatedAt: now,
       });

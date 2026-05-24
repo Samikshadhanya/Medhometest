@@ -2,10 +2,18 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
-import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut as firebaseSignOut,
+} from 'firebase/auth';
 import { initialState, medicineImage } from '@/lib/initial-data';
 import type { AppState, AppUser, Caregiver, FamilyMember, Household, Medicine, MedicineInput, MemberInput, ReminderInput, ReminderLog } from '@/lib/types';
 import { auth, db, googleProvider } from '@/lib/firebase';
+import { daysUntil } from '@/lib/date-utils';
 import { createHousehold, fetchUserProfile, setActiveHousehold } from '@/services/householdService';
 import { createMedicine, deleteMedicine as deleteMedicineRequest, fetchMedicines, updateMedicine as updateMedicineRequest } from '@/services/medicineService';
 import { createReminder, deleteReminder as deleteReminderRequest, fetchReminders, updateReminder as updateReminderRequest } from '@/services/reminderService';
@@ -16,8 +24,9 @@ export type { AppState, AppUser, Caregiver, FamilyMember, Medicine, MedicineInpu
 type AppStore = AppState & {
   loading: boolean;
   error: string | null;
-  signIn: (provider: AppUser['authProvider'], email?: string, name?: string, age?: string, role?: string) => Promise<void>;
+  signIn: (provider: AppUser['authProvider'], email?: string, name?: string, age?: string, role?: string, password?: string, createAccount?: boolean) => Promise<void>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   refreshHouseholdData: () => Promise<void>;
   addMedicine: (medicine: MedicineInput) => Promise<void>;
   updateMedicine: (id: string, medicine: Partial<MedicineInput>) => Promise<void>;
@@ -42,7 +51,7 @@ type AppStore = AppState & {
 
 const AppContext = createContext<AppStore | null>(null);
 
-const localProviders = new Set<AppUser['authProvider']>(['email', 'guest']);
+const localProviders = new Set<AppUser['authProvider']>(['guest']);
 
 const newLocalId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -51,19 +60,6 @@ const daysUntil = (date: string) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return Math.ceil((target.getTime() - today.getTime()) / 86400000);
-};
-
-const withTimeout = async <T,>(promise: Promise<T>, milliseconds: number, message: string): Promise<T> => {
-  let timeoutId: number | undefined;
-  const timeout = new Promise<never>((_, reject) => {
-    timeoutId = window.setTimeout(() => reject(new Error(message)), milliseconds);
-  });
-
-  try {
-    return await Promise.race([promise, timeout]);
-  } finally {
-    if (timeoutId) window.clearTimeout(timeoutId);
-  }
 };
 
 const userFromProfile = (
@@ -106,8 +102,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
-  const loadAuthenticatedUser = useCallback(async () => {
+  const loadAuthenticatedUser = useCallback(async (expectedUid = auth.currentUser?.uid) => {
+    if (!expectedUid) return;
+
     const bundle = await fetchUserProfile();
+
+    if (auth.currentUser?.uid !== expectedUid) return;
+
     const appUser = userFromProfile(bundle.profile, bundle.household, bundle.households);
 
     setState((current) => ({
@@ -120,23 +121,44 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [loadHouseholdData]);
 
   useEffect(() => {
-    const fallbackTimer = window.setTimeout(() => {
+    let active = true;
+    let handledInitialAuth = false;
+
+    async function handleAuthUser(uid: string) {
+      try {
+        setLoading(true);
+        await loadAuthenticatedUser(uid);
+      } catch (loadError) {
+        const message = loadError instanceof Error ? loadError.message : 'Failed to load your MedHome data.';
+        setError(
+          message === 'Request failed.'
+            ? 'Could not load cloud household data. You can sign in again or continue as guest.'
+            : message,
+        );
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    }
+
+    function handleSignedOut() {
+      setState(initialState);
       setLoading(false);
-    }, 8000);
+    }
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      window.clearTimeout(fallbackTimer);
+      handledInitialAuth = true;
       setError(null);
 
       if (!firebaseUser) {
-        setState(initialState);
-        setLoading(false);
+        handleSignedOut();
         return;
       }
 
       try {
         setLoading(true);
-        await withTimeout(loadAuthenticatedUser(), 15000, 'Firebase sign-in succeeded, but loading household data timed out. Please refresh or check the deployment Firebase settings.');
+        await loadAuthenticatedUser();
       } catch (loadError) {
         const message = loadError instanceof Error ? loadError.message : 'Failed to load your MedHome data.';
         setError(message);
@@ -146,7 +168,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
-      window.clearTimeout(fallbackTimer);
+      active = false;
       unsubscribe();
     };
   }, [loadAuthenticatedUser]);
@@ -197,12 +219,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       todayReminders: state.reminderLogs,
       calendarUrlForMedicine,
       refreshHouseholdData,
-      signIn: async (provider, email, name, age, role) => {
+      signIn: async (provider, email, name, age, role, password, createAccount) => {
         setError(null);
 
         if (provider === 'google') {
           await signInWithPopup(auth, googleProvider);
-          await loadAuthenticatedUser();
+          await loadAuthenticatedUser(auth.currentUser?.uid);
+          return;
+        }
+
+        if (provider === 'email') {
+          const cleanEmail = email?.trim();
+          if (!cleanEmail || !password) {
+            throw new Error('Email and password are required.');
+          }
+
+          if (createAccount) {
+            await createUserWithEmailAndPassword(auth, cleanEmail, password);
+          } else {
+            await signInWithEmailAndPassword(auth, cleanEmail, password);
+          }
+          await loadAuthenticatedUser(auth.currentUser?.uid);
           return;
         }
 
@@ -237,10 +274,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         });
       },
       signOut: async () => {
-        if (auth.currentUser) {
-          await firebaseSignOut(auth);
-        }
+        setError(null);
+        setLoading(true);
         setState(initialState);
+
+        try {
+          if (auth.currentUser) {
+            await firebaseSignOut(auth);
+          }
+        } finally {
+          setLoading(false);
+        }
+      },
+      resetPassword: async (email) => {
+        const cleanEmail = email.trim();
+        if (!cleanEmail) throw new Error('Enter your email address first.');
+        await sendPasswordResetEmail(auth, cleanEmail);
       },
       switchHousehold: async (newHousehold) => {
         const index = state.user.households?.findIndex((name) => name === newHousehold) ?? -1;

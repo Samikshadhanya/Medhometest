@@ -52,6 +52,10 @@ export type Caregiver = {
   name: string;
   relationship: string;
   accessLevel: string;
+  phone?: string;
+  email?: string;
+  notes?: string;
+  availability?: string;
   status: 'Active' | 'Invited';
 };
 

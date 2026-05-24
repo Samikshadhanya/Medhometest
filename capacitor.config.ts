@@ -3,6 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.medhome.app',
   appName: 'MedHome',
+  webDir: '.next',
   server: {
     url: 'https://medhome-81dq.vercel.app',
     cleartext: true
