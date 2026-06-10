@@ -5,23 +5,22 @@ import { usePathname } from 'next/navigation';
 import {
   BarChart3,
   Bell,
-  ChevronLeft,
-  ChevronRight,
   Home,
   LayoutGrid,
   Package,
   Settings,
   ShoppingCart,
+  X,
   Users,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/app-store';
 
 interface SidebarProps {
   open: boolean;
-  onToggle: () => void;
+  onClose: () => void;
 }
 
-export default function Sidebar({ open, onToggle }: SidebarProps) {
+export default function Sidebar({ open, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { todayReminders, expiringMedicines } = useAppStore();
   const reminderAlertCount = todayReminders.length + expiringMedicines.length;
@@ -34,28 +33,23 @@ export default function Sidebar({ open, onToggle }: SidebarProps) {
     { icon: BarChart3, label: 'Reports', href: '/reports' },
     { icon: Settings, label: 'Settings', href: '/settings' },
   ];
-  const closeAfterMobileNavigation = () => {
-    if (window.innerWidth < 768 && open) onToggle();
-  };
 
   return (
     <>
-      <aside className={`${open ? 'translate-x-0 md:w-64' : '-translate-x-full md:translate-x-0 md:w-20'} fixed inset-y-0 left-0 z-40 flex w-[min(18rem,86vw)] flex-col bg-slate-900 text-white transition-all duration-300 md:relative md:flex-shrink-0`}>
-        <div className="flex items-center justify-between border-b border-slate-800 px-4 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] md:pt-4">
-          {open && (
-            <Link href="/dashboard" onClick={closeAfterMobileNavigation} className="flex items-center gap-2 rounded hover:opacity-90">
-              <div className="w-8 h-8 bg-teal-500 rounded flex items-center justify-center">
-                <Home className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-lg">MedHome</span>
-            </Link>
-          )}
-          <button onClick={onToggle} className="p-1 hover:bg-slate-800 rounded transition">
-            {open ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+      <aside className={`${open ? 'translate-x-0' : '-translate-x-full'} fixed lg:static lg:translate-x-0 inset-y-0 left-0 z-50 flex w-[min(19rem,86vw)] lg:w-64 flex-col bg-slate-950 text-white shadow-2xl lg:shadow-none transition-transform duration-300 ease-out`}>
+        <div className="flex items-center justify-between border-b border-slate-800 px-4 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)]">
+          <Link href="/dashboard" onClick={onClose} className="flex min-h-11 items-center gap-2 rounded hover:opacity-90">
+            <div className="grid h-9 w-9 place-items-center rounded-lg bg-teal-500">
+              <Home className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-lg font-bold">MedHome</span>
+          </Link>
+          <button onClick={onClose} className="grid lg:hidden min-h-11 min-w-11 place-items-center rounded-lg hover:bg-slate-800 transition" aria-label="Close menu">
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-2">
+        <nav className="flex-1 space-y-2 overflow-y-auto px-3 py-5">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -63,15 +57,14 @@ export default function Sidebar({ open, onToggle }: SidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={closeAfterMobileNavigation}
-                className={`flex items-center gap-3 px-3 py-3 rounded-lg transition ${
+                onClick={onClose}
+                className={`flex min-h-12 items-center gap-3 rounded-lg px-3 py-3 transition active:scale-[0.98] ${
                   isActive ? 'bg-teal-600 text-white' : 'text-slate-300 hover:bg-slate-800'
                 }`}
-                title={!open ? item.label : ''}
               >
-                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                {open && <span className="text-sm font-medium">{item.label}</span>}
-                {open && item.count ? (
+                <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                <span className="text-sm font-medium">{item.label}</span>
+                {item.count ? (
                   <span className={`ml-auto rounded-full px-2 py-0.5 text-xs font-bold ${isActive ? 'bg-white text-teal-700' : 'bg-teal-500 text-white'}`}>
                     {item.count}
                   </span>
@@ -82,7 +75,7 @@ export default function Sidebar({ open, onToggle }: SidebarProps) {
         </nav>
       </aside>
 
-      {open && <div className="fixed inset-0 bg-black/50 md:hidden z-30" onClick={onToggle} />}
+      {open && <div className="fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px] lg:hidden" onClick={onClose} />}
     </>
   );
 }

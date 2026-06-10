@@ -13,23 +13,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia('(min-width: 768px)');
-    const syncSidebar = () => setSidebarOpen(media.matches);
-
-    syncSidebar();
-    media.addEventListener('change', syncSidebar);
-    return () => media.removeEventListener('change', syncSidebar);
+    setSidebarOpen(false);
   }, []);
 
   return (
     <ProtectedRoute>
       <div className="app-shell flex bg-slate-50">
-        <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-        <div className="min-w-0 flex-1 flex flex-col overflow-hidden">
+        <div className="flex flex-1 h-full min-w-0 flex-col overflow-hidden">
           <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
-          <main className="min-h-0 flex-1 overflow-auto app-content">
+          <main className="app-content min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
             {children}
           </main>
         </div>

@@ -1,0 +1,216 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { AlertTriangle, CalendarClock, ChevronLeft, Check, Clock, Plus, Trash2, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAppStore } from '@/lib/app-store';
+
+export default function RemindersPage() {
+  const { todayReminders, medicines, members, getMember, markDose, deleteReminder, addReminder, expiringMedicines, lowStockMedicines } = useAppStore();
+  const [medicineId, setMedicineId] = useState(medicines[0]?.id ?? '');
+  const [time, setTime] = useState('08:00');
+
+  useEffect(() => {
+    if (!medicineId && medicines[0]?.id) {
+      setMedicineId(medicines[0].id);
+    }
+  }, [medicineId, medicines]);
+
+  const selectedMedicine = medicines.find((medicine) => medicine.id === medicineId);
+
+  const submitReminder = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!selectedMedicine) return;
+
+    await addReminder({
+      medicineId: selectedMedicine.id,
+      memberId: selectedMedicine.assignedToId,
+      time,
+    });
+  };
+
+  return (
+    <>
+      <div className="page-panel space-y-5 p-3 sm:p-4 md:p-6">
+        <div className="flex items-center gap-4">
+
+          <div>
+            <h1 className="text-2xl font-bold leading-tight text-slate-900 md:text-3xl">Reminders</h1>
+            <p className="mt-1 text-sm text-slate-600 md:text-base">Track pill reminders.</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white lg:col-span-2">
+            <div className="px-5 py-4 border-b border-slate-200">
+              <h2 className="font-bold text-slate-900">Today&apos;s dose schedule</h2>
+            </div>
+            <div className="divide-y divide-slate-200">
+              {todayReminders.length === 0 && (
+                <div className="p-8 text-center text-slate-600">No reminders yet. Add one from the panel.</div>
+              )}
+              {todayReminders.map((reminder) => {
+                const medicine = medicines.find((item) => item.id === reminder.medicineId);
+                const member = getMember(reminder.memberId);
+
+                return (
+                  <div key={reminder.id} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:justify-between md:p-5">
+                    <div className="flex items-start gap-3 md:gap-4">
+                      <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-teal-50 font-bold text-teal-700">
+                        {reminder.time}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-900">{medicine?.name}</p>
+                        <p className="text-sm text-slate-600">{medicine?.dosage} - {medicine?.mealInstruction}</p>
+                        <p className="text-xs text-slate-500 mt-1">{member?.name} ({member?.role})</p>
+                        <span className="inline-flex mt-2 px-2 py-1 rounded bg-slate-100 text-slate-700 text-xs capitalize">
+                          {reminder.status}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
+                      {reminder.status === 'taken' ? (
+                        <span className="text-sm font-medium text-green-700 bg-green-50 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                          <Check className="w-4 h-4" /> Taken {reminder.takenAt ? new Date(reminder.takenAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                        </span>
+                      ) : reminder.status === 'missed' ? (
+                        <span className="text-sm font-medium text-red-700 bg-red-50 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                          <X className="w-4 h-4" /> Missed
+                        </span>
+                      ) : (
+                        <>
+                          <Button onClick={() => markDose(reminder.id, 'taken')} size="sm" className="bg-green-600 hover:bg-green-700">
+                            <Check className="w-4 h-4" />
+                            Taken
+                          </Button>
+                          <Button onClick={() => markDose(reminder.id, 'missed')} size="sm" variant="outline" className="text-red-600">
+                            <X className="w-4 h-4" />
+                            Missed
+                          </Button>
+                        </>
+                      )}
+                      <Button
+                        onClick={() => deleteReminder(reminder.id)}
+                        size="icon-sm"
+                        variant="ghost"
+                        className="text-red-600"
+                        aria-label={`Delete reminder for ${medicine?.name ?? 'medicine'} at ${reminder.time}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg border border-amber-200 p-5 space-y-4">
+              <h2 className="font-bold text-slate-900 flex items-center gap-2">
+                <CalendarClock className="w-5 h-5 text-amber-600" />
+                Expiry reminders
+              </h2>
+              {expiringMedicines.length === 0 ? (
+                <p className="text-sm text-slate-600">No medicines expiring in the next 30 days.</p>
+              ) : (
+                <div className="space-y-3">
+                  {expiringMedicines.map((medicine) => {
+                    const member = getMember(medicine.assignedToId);
+                    return (
+                      <div key={medicine.id} className="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2">
+                        <p className="font-medium text-slate-900 flex items-center gap-2">
+                          <AlertTriangle className="w-4 h-4 text-amber-600" />
+                          {medicine.name}
+                        </p>
+                        <p className="text-sm text-slate-600">Expires {medicine.expiryDate}{member ? ` - ${member.name}` : ''}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-4">
+              <h2 className="font-bold text-slate-900 flex items-center gap-2">
+                <Plus className="w-5 h-5 text-teal-600" />
+                Add reminder
+              </h2>
+              {medicines.length === 0 ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-slate-600">Add a pill first. Its reminder times will show up here automatically.</p>
+                  <Button asChild className="w-full bg-teal-600 hover:bg-teal-700">
+                    <Link href="/inventory">Add medicine</Link>
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={submitReminder} className="space-y-3">
+                  <label className="space-y-2 text-sm font-medium text-slate-700 block">
+                    Medicine
+                    <select
+                      value={medicineId}
+                      onChange={(event) => setMedicineId(event.target.value)}
+                      className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3"
+                    >
+                      {medicines.map((medicine) => {
+                        const member = members.find((item) => item.id === medicine.assignedToId);
+                        return <option key={medicine.id} value={medicine.id}>{medicine.name} - {member?.name ?? 'Unassigned'}</option>;
+                      })}
+                    </select>
+                  </label>
+                  <label className="space-y-2 text-sm font-medium text-slate-700 block">
+                    Time
+                    <input
+                      type="time"
+                      value={time}
+                      onChange={(event) => setTime(event.target.value)}
+                      className="min-h-11 w-full rounded-lg border border-slate-300 px-3"
+                    />
+                  </label>
+                  <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Save reminder
+                  </Button>
+                </form>
+              )}
+            </div>
+
+            <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-4">
+              <h2 className="font-bold text-slate-900 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-amber-600" />
+                Restock alerts
+              </h2>
+              {lowStockMedicines.length === 0 ? (
+                <p className="text-sm text-slate-600">No low-stock medicines right now.</p>
+              ) : (
+                <div className="space-y-3">
+                  {lowStockMedicines.map((medicine) => (
+                    <div key={medicine.id} className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                      <p className="text-sm font-semibold text-slate-900">{medicine.name}</p>
+                      <p className="text-xs text-slate-600">{medicine.quantity} {medicine.unit} left. Restock threshold is {medicine.lowStockAt}.</p>
+                    </div>
+                  ))}
+                  <Button asChild variant="outline" className="w-full border-amber-300 text-amber-800 hover:bg-amber-50">
+                    <Link href="/purchase-list">Open purchase list</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-lg border border-slate-200 p-5 space-y-4">
+              <h2 className="font-bold text-slate-900 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-teal-600" />
+                Reminder rules
+              </h2>
+              <div className="space-y-3 text-sm text-slate-600">
+                <p>App reminders can be created manually or generated from medicine reminder times.</p>
+                <p>Low-stock reminders trigger when quantity reaches the medicine&apos;s threshold.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

@@ -1,6 +1,7 @@
 'use client';
 
-import { CalendarPlus, Trash2 } from 'lucide-react';
+import { CalendarPlus, Check, Pencil, Trash2, X } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Medicine, useAppStore } from '@/lib/app-store';
 import { daysUntil, formatExpiryStatus } from '@/lib/date-utils';
@@ -11,11 +12,105 @@ interface MedicineTableProps {
 }
 
 export default function MedicineTable({ medicines, showDelete = false }: MedicineTableProps) {
-  const { getMember, deleteMedicine, calendarUrlForMedicine } = useAppStore();
+  const { getMember, deleteMedicine, updateMedicine } = useAppStore();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [quantityDraft, setQuantityDraft] = useState('');
+
+  const startEdit = (medicine: Medicine) => {
+    setEditingId(medicine.id);
+    setQuantityDraft(String(medicine.quantity));
+  };
+
+  const saveEdit = async (medicine: Medicine) => {
+    const quantity = Number(quantityDraft);
+    if (!Number.isFinite(quantity) || quantity < 0) return;
+
+    await updateMedicine(medicine.id, { quantity });
+    setEditingId(null);
+    setQuantityDraft('');
+  };
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-      <div className="overflow-x-auto">
+    <div className="space-y-3 md:rounded-lg md:border md:border-slate-200 md:bg-white md:overflow-hidden">
+      <div className="space-y-3 md:hidden">
+        {medicines.map((medicine) => {
+          const member = getMember(medicine.assignedToId);
+          const daysLeft = daysUntil(medicine.expiryDate);
+          const urgent = daysLeft <= 30 || medicine.quantity <= medicine.lowStockAt;
+
+          return (
+            <article key={medicine.id} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-start gap-3">
+                <img src={medicine.image} alt={medicine.name} className="h-12 w-12 rounded-lg object-cover" />
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate font-semibold text-slate-900">{medicine.name}</h3>
+                  <p className="text-xs text-slate-500">{medicine.category} - {medicine.use}</p>
+                  <p className="mt-1 text-sm text-slate-600">{member ? `${member.name} (${member.role})` : 'Unassigned'}</p>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-lg bg-slate-50 p-3">
+                  <p className="text-xs font-medium text-slate-500">Quantity</p>
+                  {editingId === medicine.id ? (
+                    <input
+                      type="number"
+                      min={0}
+                      value={quantityDraft}
+                      onChange={(event) => setQuantityDraft(event.target.value)}
+                      className="mt-1 min-h-11 w-full rounded border border-slate-300 px-3 text-sm"
+                      aria-label={`Quantity for ${medicine.name}`}
+                    />
+                  ) : (
+                    <p className="mt-1 font-semibold text-slate-900">{medicine.quantity} {medicine.unit}</p>
+                  )}
+                  {medicine.quantity <= medicine.lowStockAt && <p className="mt-1 text-xs font-medium text-red-600">Low stock</p>}
+                </div>
+                <div className="rounded-lg bg-slate-50 p-3">
+                  <p className="text-xs font-medium text-slate-500">Expiry</p>
+                  <p className={`mt-1 font-semibold ${urgent ? 'text-orange-600' : 'text-slate-900'}`}>{medicine.expiryDate}</p>
+                  <p className="mt-1 text-xs text-slate-500">{formatExpiryStatus(medicine.expiryDate)}</p>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-2">
+
+                {editingId === medicine.id ? (
+                  <>
+                    <Button onClick={() => saveEdit(medicine)} variant="outline" size="sm" className="text-green-700" aria-label={`Save ${medicine.name}`}>
+                      <Check className="h-4 w-4" />
+                      Save
+                    </Button>
+                    <Button onClick={() => setEditingId(null)} variant="ghost" size="sm" aria-label={`Cancel editing ${medicine.name}`}>
+                      <X className="h-4 w-4" />
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={() => startEdit(medicine)} variant="outline" size="sm" aria-label={`Edit ${medicine.name}`}>
+                    <Pencil className="h-4 w-4" />
+                    Edit
+                  </Button>
+                )}
+                {showDelete && (
+                  <Button
+                    onClick={() => deleteMedicine(medicine.id)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-600"
+                    aria-label={`Delete ${medicine.name}`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete
+                  </Button>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="hidden md:block">
         <table className="w-full">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
@@ -45,7 +140,20 @@ export default function MedicineTable({ medicines, showDelete = false }: Medicin
                   </td>
                   <td className="px-4 py-4 md:px-6 text-slate-600">{member ? `${member.name} (${member.role})` : 'Unassigned'}</td>
                   <td className="px-4 py-4 md:px-6 text-slate-600">
-                    {medicine.quantity} {medicine.unit}
+                    {editingId === medicine.id ? (
+                      <input
+                        type="number"
+                        min={0}
+                        value={quantityDraft}
+                        onChange={(event) => setQuantityDraft(event.target.value)}
+                        className="w-24 rounded border border-slate-300 px-2 py-1 text-sm"
+                        aria-label={`Quantity for ${medicine.name}`}
+                      />
+                    ) : (
+                      <>
+                        {medicine.quantity} {medicine.unit}
+                      </>
+                    )}
                     {medicine.quantity <= medicine.lowStockAt && <p className="text-xs text-red-600 mt-1">Low stock</p>}
                   </td>
                   <td className="px-4 py-4 md:px-6">
@@ -54,12 +162,21 @@ export default function MedicineTable({ medicines, showDelete = false }: Medicin
                   </td>
                   <td className="px-4 py-4 md:px-6">
                     <div className="flex items-center justify-center gap-2">
-                      <Button asChild variant="outline" size="sm" className="text-teal-600 border-teal-600 hover:bg-teal-50">
-                        <a href={calendarUrlForMedicine(medicine)} target="_blank" rel="noreferrer">
-                          <CalendarPlus className="w-4 h-4" />
-                          Calendar
-                        </a>
-                      </Button>
+
+                      {editingId === medicine.id ? (
+                        <>
+                          <Button onClick={() => saveEdit(medicine)} variant="outline" size="icon-sm" className="text-green-700" aria-label={`Save ${medicine.name}`}>
+                            <Check className="w-4 h-4" />
+                          </Button>
+                          <Button onClick={() => setEditingId(null)} variant="ghost" size="icon-sm" aria-label={`Cancel editing ${medicine.name}`}>
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <Button onClick={() => startEdit(medicine)} variant="ghost" size="icon-sm" aria-label={`Edit ${medicine.name}`}>
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                      )}
                       {showDelete && (
                         <Button
                           onClick={() => deleteMedicine(medicine.id)}

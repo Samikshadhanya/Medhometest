@@ -44,24 +44,25 @@ export default function Header({ onMenuClick }: HeaderProps) {
   ];
 
   return (
-    <header className="shrink-0 bg-white border-b border-slate-200 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] md:px-6 md:py-4 flex items-center justify-between gap-3">
-      <div className="min-w-0 flex items-center gap-2 md:gap-4">
-        <button onClick={onMenuClick} className="md:hidden p-2 hover:bg-slate-100 rounded-lg transition">
-          <Menu className="w-6 h-6" />
+    <header className="relative z-40 shrink-0 border-b border-slate-200 bg-white/95 px-3 pb-2 pt-[calc(env(safe-area-inset-top)+0.5rem)] backdrop-blur supports-[backdrop-filter]:bg-white/85">
+      <div className="flex items-center justify-between gap-2">
+      <div className="min-w-0 flex items-center gap-2">
+        <button onClick={onMenuClick} className="grid lg:hidden min-h-11 min-w-11 place-items-center rounded-lg hover:bg-slate-100 active:scale-95 transition" aria-label="Open menu">
+          <Menu className="h-6 w-6" />
         </button>
 
         <div className="relative flex min-w-0 items-center gap-2">
           <span className="text-sm text-slate-600 hidden sm:block">Selected Household</span>
           <button 
             onClick={() => setShowHouseholdMenu(!showHouseholdMenu)}
-            className="min-w-0 flex items-center gap-1 px-2 py-1.5 md:px-3 rounded-lg hover:bg-slate-100 transition font-medium text-slate-900"
+            className="min-h-11 min-w-0 flex items-center gap-1 rounded-lg px-2 text-left font-medium text-slate-900 transition hover:bg-slate-100 active:scale-95"
           >
-            <span className="truncate max-w-[9rem] sm:max-w-[14rem]">{user.household}</span>
-            <ChevronDown className="w-4 h-4" />
+            <span className="max-w-[9rem] truncate text-sm sm:max-w-[14rem]">{user.household || 'MedHome'}</span>
+            <ChevronDown className="h-4 w-4 shrink-0" />
           </button>
 
           {showHouseholdMenu && (
-            <div className="absolute top-full left-0 sm:left-auto mt-2 w-[min(20rem,calc(100vw-2rem))] bg-white rounded-lg shadow-lg border border-slate-200 z-20">
+            <div className="absolute left-0 top-full z-30 mt-2 w-[min(20rem,calc(100vw-1.5rem))] rounded-lg border border-slate-200 bg-white shadow-lg sm:left-auto">
               <div className="p-2 space-y-1">
                 <p className="text-xs font-semibold text-slate-500 px-2 py-1">Switch Household</p>
                 {user.households?.map((hh) => (
@@ -71,7 +72,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
                       switchHousehold(hh);
                       setShowHouseholdMenu(false);
                     }}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm ${hh === user.household ? 'bg-teal-50 text-teal-700 font-medium' : 'hover:bg-slate-50 text-slate-700'}`}
+                    className={`min-h-11 w-full rounded-md px-3 py-2 text-left text-sm ${hh === user.household ? 'bg-teal-50 font-medium text-teal-700' : 'text-slate-700 hover:bg-slate-50'}`}
                   >
                     {hh}
                   </button>
@@ -85,7 +86,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
                       placeholder="Family Name" 
                       value={newHouseholdName}
                       onChange={(e) => setNewHouseholdName(e.target.value)}
-                      className="w-full text-sm px-2 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
+                      className="min-h-11 w-full rounded-md border border-slate-200 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-teal-500"
                     />
                     <button 
                       disabled={addingHousehold}
@@ -105,7 +106,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
                           setAddingHousehold(false);
                         }
                       }}
-                      className="px-3 py-1.5 bg-teal-600 text-white text-sm rounded-md hover:bg-teal-700 font-medium transition disabled:cursor-not-allowed disabled:opacity-60"
+                      className="min-h-11 rounded-md bg-teal-600 px-3 text-sm font-medium text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {addingHousehold ? 'Adding' : 'Add'}
                     </button>
@@ -116,26 +117,26 @@ export default function Header({ onMenuClick }: HeaderProps) {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-sm text-slate-700">
-          <Home className="w-4 h-4 text-teal-600" />
+        <div className="hidden items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 sm:flex">
+          <Home className="h-4 w-4 text-teal-600" />
           <span className="font-medium text-slate-900">Your household</span>
           {user.household && <span className="hidden sm:inline text-slate-500">- {user.household}</span>}
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 md:gap-4">
+      <div className="flex shrink-0 items-center gap-1">
 
         <div className="relative">
           <button 
             onClick={() => setShowNotificationsMenu((curr) => !curr)} 
-            className="relative p-2 hover:bg-slate-100 rounded-lg transition"
+            className="relative grid min-h-11 min-w-11 place-items-center rounded-lg transition hover:bg-slate-100 active:scale-95"
           >
-            <Bell className="w-6 h-6 text-slate-600" />
+            <Bell className="h-5 w-5 text-slate-600" />
             {notifications.length > 0 && <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />}
           </button>
 
           {showNotificationsMenu && (
-            <div className="absolute right-0 mt-2 w-[min(20rem,calc(100vw-1rem))] bg-white rounded-lg shadow-xl border border-slate-200 z-30 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="absolute right-0 z-30 mt-2 w-[min(21rem,calc(100vw-1rem))] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
                 <h3 className="font-semibold text-slate-900">Notifications</h3>
                 <span className="text-xs font-medium bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">{notifications.length} New</span>
@@ -182,20 +183,20 @@ export default function Header({ onMenuClick }: HeaderProps) {
         <div className="relative">
           <button
             onClick={() => setShowUserMenu((current) => !current)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition"
+            className="flex min-h-11 items-center gap-2 rounded-lg px-2 transition hover:bg-slate-100 active:scale-95"
           >
-            <div className="w-8 h-8 rounded-full bg-teal-600 text-white grid place-items-center text-sm font-bold">
+            <div className="grid h-8 w-8 place-items-center rounded-full bg-teal-600 text-sm font-bold text-white">
               {user.name.charAt(0)}
             </div>
             <div className="text-left hidden sm:block">
               <p className="text-sm font-medium text-slate-900">{user.name}</p>
               <p className="text-xs text-slate-500">{user.role}</p>
             </div>
-            <ChevronDown className="w-4 h-4 text-slate-600" />
+            <ChevronDown className="hidden h-4 w-4 text-slate-600 sm:block" />
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-slate-200 z-10">
+            <div className="absolute right-0 z-30 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg">
               <div className="px-4 py-3 border-b border-slate-200">
                 <p className="text-sm font-medium text-slate-900">{user.name}</p>
                 <p className="text-xs text-slate-500">{user.email}</p>
@@ -206,7 +207,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
                   await signOut();
                   router.replace('/signin');
                 }}
-                className="w-full flex items-center gap-2 px-4 py-3 text-slate-700 hover:bg-slate-50 text-sm"
+                className="flex min-h-11 w-full items-center gap-2 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50"
               >
                 <LogOut className="w-4 h-4" />
                 Sign out
@@ -214,6 +215,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
             </div>
           )}
         </div>
+      </div>
       </div>
     </header>
   );

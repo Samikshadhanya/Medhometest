@@ -23,39 +23,57 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read, update: if signedIn() && request.auth.uid == userId;
+      allow read: if signedIn() && request.auth.uid == userId;
       allow create: if signedIn() && request.auth.uid == userId;
+      // FIX: Prevent users from granting themselves access to other households
+      allow update: if signedIn() && request.auth.uid == userId && 
+                    (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['householdIds']));
       allow delete: if false;
     }
 
     match /households/{householdId} {
       allow read: if belongsToHousehold(householdId);
       allow create: if signedIn() && request.resource.data.ownerUid == request.auth.uid;
-      allow update, delete: if signedIn() && resource.data.ownerUid == request.auth.uid;
+      // FIX: Prevent owner from locking themselves out by modifying ownerUid
+      allow update: if signedIn() && resource.data.ownerUid == request.auth.uid &&
+                    request.resource.data.ownerUid == resource.data.ownerUid;
+      allow delete: if signedIn() && resource.data.ownerUid == request.auth.uid;
     }
 
     match /medicines/{medicineId} {
       allow read: if belongsToHousehold(resource.data.householdId);
       allow create: if belongsToHousehold(request.resource.data.householdId);
-      allow update, delete: if belongsToHousehold(resource.data.householdId);
+      // FIX: Prevent transferring medicines between households
+      allow update: if belongsToHousehold(resource.data.householdId) && 
+                    request.resource.data.householdId == resource.data.householdId;
+      allow delete: if belongsToHousehold(resource.data.householdId);
     }
 
     match /reminders/{reminderId} {
       allow read: if belongsToHousehold(resource.data.householdId);
       allow create: if belongsToHousehold(request.resource.data.householdId);
-      allow update, delete: if belongsToHousehold(resource.data.householdId);
+      // FIX: Prevent transferring reminders
+      allow update: if belongsToHousehold(resource.data.householdId) && 
+                    request.resource.data.householdId == resource.data.householdId;
+      allow delete: if belongsToHousehold(resource.data.householdId);
     }
 
     match /members/{memberId} {
       allow read: if belongsToHousehold(resource.data.householdId);
       allow create: if belongsToHousehold(request.resource.data.householdId);
-      allow update, delete: if belongsToHousehold(resource.data.householdId);
+      // FIX: Prevent transferring members
+      allow update: if belongsToHousehold(resource.data.householdId) && 
+                    request.resource.data.householdId == resource.data.householdId;
+      allow delete: if belongsToHousehold(resource.data.householdId);
     }
 
     match /caregivers/{caregiverId} {
       allow read: if belongsToHousehold(resource.data.householdId);
       allow create: if belongsToHousehold(request.resource.data.householdId);
-      allow update, delete: if belongsToHousehold(resource.data.householdId);
+      // FIX: Prevent transferring caregivers
+      allow update: if belongsToHousehold(resource.data.householdId) && 
+                    request.resource.data.householdId == resource.data.householdId;
+      allow delete: if belongsToHousehold(resource.data.householdId);
     }
   }
 }

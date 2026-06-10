@@ -1,7 +1,17 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import { AppProvider } from '@/lib/app-store'
+import { ErrorBoundary } from '@/lib/error-boundary'
+import { NetworkStatusIndicator } from '@/components/network-status-indicator'
 import './globals.css'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'auto',
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
@@ -28,8 +38,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <AppProvider>{children}</AppProvider>
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <ErrorBoundary>
+          <NetworkStatusIndicator />
+          <AppProvider>{children}</AppProvider>
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+        </ErrorBoundary>
       </body>
     </html>
   )

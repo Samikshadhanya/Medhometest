@@ -1,5 +1,6 @@
+import { collection, doc, addDoc, getDocs, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import type { Medicine, MedicineInput } from '@/lib/types';
-import { apiRequest } from '@/services/apiClient';
 
 type CreateMedicinePayload = MedicineInput & {
   householdId: string;
@@ -7,25 +8,30 @@ type CreateMedicinePayload = MedicineInput & {
 };
 
 export async function fetchMedicines(householdId: string) {
-  return apiRequest<{ medicines: Medicine[] }>(`/api/medicines?householdId=${encodeURIComponent(householdId)}`);
+  const q = query(collection(db, 'medicines'), where('householdId', '==', householdId));
+  const snapshot = await getDocs(q);
+  const medicines = snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as any) } as Medicine));
+  return { medicines };
 }
 
 export async function createMedicine(medicine: CreateMedicinePayload) {
-  return apiRequest<{ medicine: Medicine }>('/api/medicines', {
-    method: 'POST',
-    body: medicine,
+  const docRef = await addDoc(collection(db, 'medicines'), {
+    ...medicine,
+    createdAt: new Date().toISOString(),
   });
+  return { medicine: { ...medicine, id: docRef.id } as Medicine };
 }
 
 export async function updateMedicine(id: string, medicine: Partial<MedicineInput>) {
-  return apiRequest<{ medicine: Medicine }>(`/api/medicines/${id}`, {
-    method: 'PATCH',
-    body: medicine,
+  const docRef = doc(db, 'medicines', id);
+  await updateDoc(docRef, {
+    ...medicine,
+    updatedAt: new Date().toISOString(),
   });
+  return { medicine: { ...medicine, id } as Medicine };
 }
 
 export async function deleteMedicine(id: string) {
-  return apiRequest<{ ok: true }>(`/api/medicines/${id}`, {
-    method: 'DELETE',
-  });
+  await deleteDoc(doc(db, 'medicines', id));
+  return { ok: true as const };
 }

@@ -1,0 +1,25 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+exports.id = "vendor-chunks/@protobufjs+inquire@1.1.1";
+exports.ids = ["vendor-chunks/@protobufjs+inquire@1.1.1"];
+exports.modules = {
+
+/***/ "(ssr)/./node_modules/.pnpm/@protobufjs+inquire@1.1.1/node_modules/@protobufjs/inquire/index.js":
+/*!************************************************************************************************!*\
+  !*** ./node_modules/.pnpm/@protobufjs+inquire@1.1.1/node_modules/@protobufjs/inquire/index.js ***!
+  \************************************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+eval("\r\nmodule.exports = inquire;\r\n\r\n/**\r\n * Requires a module only if available.\r\n * @memberof util\r\n * @param {string} moduleName Module to require\r\n * @returns {?Object} Required module if available and not empty, otherwise `null`\r\n */\r\nfunction inquire(moduleName) {\r\n  try {\r\n    if (false) {}\r\n    var mod = __webpack_require__(\"(ssr)/./node_modules/.pnpm/@protobufjs+inquire@1.1.1/node_modules/@protobufjs/inquire sync recursive\")(moduleName);\r\n    if (mod && (mod.length || Object.keys(mod).length)) return mod;\r\n    return null;\r\n  } catch (err) {\r\n    // ignore\r\n    return null;\r\n  }\r\n}\r\n\r\n/*\r\n// maybe worth a shot to prevent renaming issues:\r\n// see: https://github.com/webpack/webpack/blob/master/lib/dependencies/CommonJsRequireDependencyParserPlugin.js\r\n// triggers on:\r\n// - expression require.cache\r\n// - expression require (???)\r\n// - call require\r\n// - call require:commonjs:item\r\n// - call require:commonjs:context\r\n\r\nObject.defineProperty(Function.prototype, \"__self\", { get: function() { return this; } });\r\nvar r = require.__self;\r\ndelete Function.prototype.__self;\r\n*/\r\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHNzcikvLi9ub2RlX21vZHVsZXMvLnBucG0vQHByb3RvYnVmanMraW5xdWlyZUAxLjEuMS9ub2RlX21vZHVsZXMvQHByb3RvYnVmanMvaW5xdWlyZS9pbmRleC5qcyIsIm1hcHBpbmdzIjoiQUFBYTtBQUNiO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSxXQUFXLFFBQVE7QUFDbkIsYUFBYSxTQUFTO0FBQ3RCO0FBQ0E7QUFDQTtBQUNBLFFBQVEsS0FBNkIsRUFBRSxFQUVsQztBQUNMLGNBQWMsNEhBQVEsVUFBVSxDQUFDO0FBQ2pDO0FBQ0E7QUFDQSxJQUFJO0FBQ0o7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0Esc0RBQXNELGtCQUFrQixnQkFBZ0I7QUFDeEY7QUFDQTtBQUNBIiwic291cmNlcyI6WyJDOlxcUHJvamVjdHNcXG1lZGhvbWVcXG5vZGVfbW9kdWxlc1xcLnBucG1cXEBwcm90b2J1ZmpzK2lucXVpcmVAMS4xLjFcXG5vZGVfbW9kdWxlc1xcQHByb3RvYnVmanNcXGlucXVpcmVcXGluZGV4LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIlwidXNlIHN0cmljdFwiO1xyXG5tb2R1bGUuZXhwb3J0cyA9IGlucXVpcmU7XHJcblxyXG4vKipcclxuICogUmVxdWlyZXMgYSBtb2R1bGUgb25seSBpZiBhdmFpbGFibGUuXHJcbiAqIEBtZW1iZXJvZiB1dGlsXHJcbiAqIEBwYXJhbSB7c3RyaW5nfSBtb2R1bGVOYW1lIE1vZHVsZSB0byByZXF1aXJlXHJcbiAqIEByZXR1cm5zIHs/T2JqZWN0fSBSZXF1aXJlZCBtb2R1bGUgaWYgYXZhaWxhYmxlIGFuZCBub3QgZW1wdHksIG90aGVyd2lzZSBgbnVsbGBcclxuICovXHJcbmZ1bmN0aW9uIGlucXVpcmUobW9kdWxlTmFtZSkge1xyXG4gIHRyeSB7XHJcbiAgICBpZiAodHlwZW9mIHJlcXVpcmUgIT09IFwiZnVuY3Rpb25cIikge1xyXG4gICAgICByZXR1cm4gbnVsbDtcclxuICAgIH1cclxuICAgIHZhciBtb2QgPSByZXF1aXJlKG1vZHVsZU5hbWUpO1xyXG4gICAgaWYgKG1vZCAmJiAobW9kLmxlbmd0aCB8fCBPYmplY3Qua2V5cyhtb2QpLmxlbmd0aCkpIHJldHVybiBtb2Q7XHJcbiAgICByZXR1cm4gbnVsbDtcclxuICB9IGNhdGNoIChlcnIpIHtcclxuICAgIC8vIGlnbm9yZVxyXG4gICAgcmV0dXJuIG51bGw7XHJcbiAgfVxyXG59XHJcblxyXG4vKlxyXG4vLyBtYXliZSB3b3J0aCBhIHNob3QgdG8gcHJldmVudCByZW5hbWluZyBpc3N1ZXM6XHJcbi8vIHNlZTogaHR0cHM6Ly9naXRodWIuY29tL3dlYnBhY2svd2VicGFjay9ibG9iL21hc3Rlci9saWIvZGVwZW5kZW5jaWVzL0NvbW1vbkpzUmVxdWlyZURlcGVuZGVuY3lQYXJzZXJQbHVnaW4uanNcclxuLy8gdHJpZ2dlcnMgb246XHJcbi8vIC0gZXhwcmVzc2lvbiByZXF1aXJlLmNhY2hlXHJcbi8vIC0gZXhwcmVzc2lvbiByZXF1aXJlICg/Pz8pXHJcbi8vIC0gY2FsbCByZXF1aXJlXHJcbi8vIC0gY2FsbCByZXF1aXJlOmNvbW1vbmpzOml0ZW1cclxuLy8gLSBjYWxsIHJlcXVpcmU6Y29tbW9uanM6Y29udGV4dFxyXG5cclxuT2JqZWN0LmRlZmluZVByb3BlcnR5KEZ1bmN0aW9uLnByb3RvdHlwZSwgXCJfX3NlbGZcIiwgeyBnZXQ6IGZ1bmN0aW9uKCkgeyByZXR1cm4gdGhpczsgfSB9KTtcclxudmFyIHIgPSByZXF1aXJlLl9fc2VsZjtcclxuZGVsZXRlIEZ1bmN0aW9uLnByb3RvdHlwZS5fX3NlbGY7XHJcbiovXHJcbiJdLCJuYW1lcyI6W10sImlnbm9yZUxpc3QiOlswXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///(ssr)/./node_modules/.pnpm/@protobufjs+inquire@1.1.1/node_modules/@protobufjs/inquire/index.js\n");
+
+/***/ })
+
+};
+;

@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp, type FirebaseOptions } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth, GoogleAuthProvider, browserLocalPersistence, initializeAuth, type Auth } from 'firebase/auth';
+import { getFirestore, initializeFirestore, persistentLocalCache, type Firestore } from 'firebase/firestore';
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,12 +12,25 @@ const firebaseConfig: FirebaseOptions = {
 };
 
 if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId || !firebaseConfig.appId) {
-  throw new Error('Missing public Firebase environment variables for the frontend SDK.');
+  console.warn('Missing Firebase environment variables. Running in guest mode.');
 }
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const googleProvider = new GoogleAuthProvider();
+
+// Initialize Auth with local persistence for better mobile experience
+let auth: Auth = null as any;
+let db: Firestore = null as any;
+let googleProvider: GoogleAuthProvider = null as any;
+
+try {
+  if (firebaseConfig.apiKey) {
+    auth = getAuth(app);
+    auth.setPersistence(browserLocalPersistence);
+    db = initializeFirestore(app, { localCache: persistentLocalCache() });
+    googleProvider = new GoogleAuthProvider();
+  }
+} catch (error) {
+  console.error('Firebase initialization error:', error);
+}
 
 export { app, auth, db, googleProvider };

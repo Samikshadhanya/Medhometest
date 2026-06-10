@@ -5,7 +5,6 @@ import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'fireb
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
-  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut as firebaseSignOut,
@@ -26,7 +25,6 @@ type AppStore = AppState & {
   error: string | null;
   signIn: (provider: AppUser['authProvider'], email?: string, name?: string, age?: string, role?: string, password?: string, createAccount?: boolean) => Promise<void>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
   refreshHouseholdData: () => Promise<void>;
   addMedicine: (medicine: MedicineInput) => Promise<void>;
   updateMedicine: (id: string, medicine: Partial<MedicineInput>) => Promise<void>;
@@ -46,7 +44,6 @@ type AppStore = AppState & {
   duplicateMedicines: Medicine[];
   purchaseList: Medicine[];
   todayReminders: ReminderLog[];
-  calendarUrlForMedicine: (medicine: Medicine) => string;
 };
 
 const AppContext = createContext<AppStore | null>(null);
@@ -161,19 +158,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       all.findIndex((item) => item.name.toLowerCase() === medicine.name.toLowerCase()) !== index,
     );
 
-    const calendarUrlForMedicine = (medicine: Medicine) => {
-      const member = state.members.find((item) => item.id === medicine.assignedToId);
-      const title = encodeURIComponent(`Take ${medicine.name}`);
-      const details = encodeURIComponent(`${medicine.dosage}, ${medicine.mealInstruction}. For ${member?.name ?? 'family member'}.`);
-      const firstTime = medicine.reminderTimes[0] || '09:00';
-      const [hours, minutes] = firstTime.split(':').map(Number);
-      const start = new Date();
-      start.setHours(hours || 9, minutes || 0, 0, 0);
-      const end = new Date(start.getTime() + 15 * 60 * 1000);
-      const formatDate = (date: Date) => date.toISOString().replace(/[-:]|\.\d{3}/g, '');
 
-      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${formatDate(start)}/${formatDate(end)}`;
-    };
 
     const householdId = state.user.householdId;
     const isLocalSession = !auth.currentUser || localProviders.has(state.user.authProvider);
@@ -187,7 +172,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       duplicateMedicines,
       purchaseList: lowStockMedicines,
       todayReminders: state.reminderLogs,
-      calendarUrlForMedicine,
       refreshHouseholdData,
       signIn: async (provider, email, name, age, role, password, createAccount) => {
         setError(null);
@@ -256,11 +240,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           setLoading(false);
         }
       },
-      resetPassword: async (email) => {
-        const cleanEmail = email.trim();
-        if (!cleanEmail) throw new Error('Enter your email address first.');
-        await sendPasswordResetEmail(auth, cleanEmail);
-      },
+
       switchHousehold: async (newHousehold) => {
         const index = state.user.households?.findIndex((name) => name === newHousehold) ?? -1;
         const nextHouseholdId = index >= 0 ? state.user.householdIds?.[index] : undefined;
@@ -402,17 +382,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       },
       markDose: async (id, status) => {
         const takenAt = status === 'taken' ? new Date().toISOString() : undefined;
+        const reminder = state.reminderLogs.find((item) => item.id === id);
+        const previousStatus = reminder?.status;
+        const medicineId = reminder?.medicineId;
 
         if (isLocalSession) {
           setState((current) => ({
             ...current,
             medicines: current.medicines.map((medicine) => {
-              const reminder = current.reminderLogs.find((item) => item.id === id);
-              if (!reminder || reminder.medicineId !== medicine.id) return medicine;
-              if (status === 'taken' && reminder.status !== 'taken') {
+              if (medicine.id !== medicineId) return medicine;
+              if (status === 'taken' && previousStatus !== 'taken') {
                 return { ...medicine, quantity: Math.max(0, medicine.quantity - 1) };
               }
-              if (reminder.status === 'taken' && status !== 'taken') {
+              if (previousStatus === 'taken' && status !== 'taken') {
                 return { ...medicine, quantity: medicine.quantity + 1 };
               }
               return medicine;
@@ -422,7 +404,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        const result = await updateReminderRequest(id, { status, takenAt });
+        const result = await updateReminderRequest(id, { status, takenAt, medicineId }, previousStatus);
         setState((current) => ({
           ...current,
           medicines: result.medicine

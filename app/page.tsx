@@ -8,7 +8,7 @@ import { useAppStore } from '@/lib/app-store';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, resetPassword, user } = useAppStore();
+  const { signIn, user } = useAppStore();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -50,16 +50,7 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordReset = async () => {
-    try {
-      setAuthError('');
-      setAuthMessage('');
-      await resetPassword(email);
-      setAuthMessage('Password reset email sent. Check your inbox.');
-    } catch (error) {
-      setAuthError(error instanceof Error ? error.message : 'Could not send reset email.');
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-slate-50 grid lg:grid-cols-[1fr_460px]">
@@ -217,25 +208,9 @@ export default function LoginPage() {
               {authMessage && <p className="text-sm font-medium text-teal-700">{authMessage}</p>}
             </form>
 
-            {!isGuestMode && (
-              <>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-slate-200" />
-                  <span className="text-xs text-slate-500">or continue with</span>
-                  <div className="flex-1 h-px bg-slate-200" />
-                </div>
 
-                <div className="grid grid-cols-1 gap-3">
-                  <button
-                    onClick={() => goToDashboard('google')}
-                    className="flex items-center justify-center gap-2 border border-slate-300 rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-slate-50"
-                  >
-                    <span className="font-bold text-blue-600">G</span>
-                    Google
-                  </button>
-                </div>
-              </>
-            )}
+
+
 
             <div className="flex flex-col gap-2 text-sm text-center">
               {isGuestMode ? (
@@ -260,15 +235,7 @@ export default function LoginPage() {
                   </button>
                 </div>
               )}
-              {!isGuestMode && (
-                <button
-                  type="button"
-                  onClick={handlePasswordReset}
-                  className="text-slate-600 hover:text-slate-900"
-                >
-                  Forgot password?
-                </button>
-              )}
+
             </div>
           </div>
         </div>
