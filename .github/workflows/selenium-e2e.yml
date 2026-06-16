@@ -1,0 +1,58 @@
+name: E2E Selenium Testing Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      - name: Build Next.js App
+        run: npm run build
+
+      - name: Start Local Mock Server
+        run: |
+          npx serve@latest out -p 3000 &
+          sleep 5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install E2E Test Dependencies
+        run: |
+          pip install selenium webdriver-manager openpyxl
+
+      - name: Set up Chrome & ChromeDriver
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Run Headless Selenium Tests
+        env:
+          CI: true
+        run: |
+          python tests/selenium/run_e2e_tests.py
+          
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-test-report
+          path: tests/selenium/*.xlsx

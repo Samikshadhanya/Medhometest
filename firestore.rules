@@ -25,9 +25,24 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if signedIn() && request.auth.uid == userId;
       allow create: if signedIn() && request.auth.uid == userId;
-      // FIX: Prevent users from granting themselves access to other households
-      allow update: if signedIn() && request.auth.uid == userId && 
-                    (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['householdIds']));
+      // SECURITY FIX: Prevent householdIds self-escalation.
+      // affectedKeys() alone was bypassable via the REST API PATCH.
+      // Now we ALSO assert the incoming householdIds must equal the stored value.
+      // If the document has no householdIds yet, only allow setting it to an empty list.
+      allow update: if signedIn()
+                    && request.auth.uid == userId
+                    && (
+                         // householdIds field not present in incoming data at all
+                         !('householdIds' in request.resource.data)
+                         ||
+                         // householdIds present but unchanged from stored value
+                         (resource.data.keys().hasAll(['householdIds'])
+                          && request.resource.data.householdIds == resource.data.householdIds)
+                         ||
+                         // householdIds not in stored doc yet — allow only empty list
+                         (!resource.data.keys().hasAll(['householdIds'])
+                          && request.resource.data.householdIds == [])
+                       );
       allow delete: if false;
     }
 

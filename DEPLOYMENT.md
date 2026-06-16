@@ -17,11 +17,9 @@ FIREBASE_CLIENT_EMAIL=
 FIREBASE_PRIVATE_KEY=
 ```
 
-`FIREBASE_PRIVATE_KEY` must include newline escapes when stored in Vercel:
-
-```bash
------BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n
-```
+`FIREBASE_PRIVATE_KEY` must include newline escapes when stored in Vercel.
+Copy the value exactly from your Firebase service account JSON file — it will start with
+`<YOUR_PRIVATE_KEY_VALUE_FROM_FIREBASE_CONSOLE>` and contain `\n` escape sequences.
 
 ## Commands
 
