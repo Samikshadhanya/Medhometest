@@ -37,7 +37,7 @@ jobs:
 
       - name: Install E2E Test Dependencies
         run: |
-          pip install selenium webdriver-manager openpyxl
+          pip install selenium webdriver-manager openpyxl --break-system-packages
 
       - name: Set up Chrome & ChromeDriver
         uses: browser-actions/setup-chrome@v1
