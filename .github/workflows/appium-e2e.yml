@@ -1,0 +1,46 @@
+name: Appium Mobile E2E Tests
+
+on: [push]
+
+jobs:
+  mobile-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Dependencies
+        run: |
+          pip install appium-python-client selenium openpyxl --break-system-packages
+
+      - name: Start Appium Server
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+          appium &
+          sleep 5
+
+      - name: Run Mobile E2E Tests
+        # Note: This runs the mobile e2e script. If `udid` is hardcoded to a local device,
+        # it might fail in CI. You may want to configure `reactivecircus/android-emulator-runner`
+        # in the future if you plan to spin up an emulator inside GitHub Actions.
+        run: |
+          python tests/appium/run_mobile_e2e.py
+        continue-on-error: true
+          
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: appium-test-report
+          path: tests/appium/*.xlsx
