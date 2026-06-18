@@ -167,14 +167,29 @@ def run_mobile_e2e_tests():
     ws.title = "Appium E2E Mobile Report"
     generate_report_headers(ws)
 
+    # ── Capability configuration ─────────────────────────────────────────────
+    # Detect whether we are running inside GitHub Actions CI or locally.
+    IS_CI = os.environ.get("GITHUB_ACTIONS", "false").lower() == "true"
+
     options = UiAutomator2Options()
-    options.platform_name = 'Android'
-    options.automation_name = 'UiAutomator2'
-    options.app_package = 'com.medhome.app'
-    options.app_activity = '.MainActivity'
+    options.platform_name          = 'Android'
+    options.automation_name        = 'UiAutomator2'
+    options.app_package            = 'com.medhome.app'
+    options.app_activity           = '.MainActivity'
     options.auto_grant_permissions = True
-    options.no_reset = True
-    
+    options.new_command_timeout    = 120
+
+    if IS_CI:
+        # GitHub Actions: AVD emulator — no UDID needed; app already installed by workflow
+        print("CI environment detected — connecting to AVD emulator (no UDID).")
+        options.no_reset = True
+    else:
+        # Local run: physical device with known UDID
+        options.udid     = 'ZN4225VKCK'
+        options.no_reset = True
+        print(f"Local environment — connecting to physical device: {options.udid}")
+    # ─────────────────────────────────────────────────────────────────────────
+
     appium_server_url = 'http://127.0.0.1:4723'
     driver = None
     
