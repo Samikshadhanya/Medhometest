@@ -329,7 +329,7 @@ def run_e2e_tests():
         ws.cell(row=3, column=2, value=failed_count)
 
         timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-        report_filename = f"E2E_Test_Report_MedHome_{timestamp}.xlsx"
+        report_filename = os.path.join(os.path.dirname(__file__), f"E2E_Test_Report_MedHome_{timestamp}.xlsx")
         
         try:
             wb.save(report_filename)
