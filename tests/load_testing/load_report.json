@@ -1,0 +1,14 @@
+{
+  "target_url": "https://medhome-81dq.vercel.app",
+  "virtual_users": 100,
+  "duration_seconds": 60.97588872909546,
+  "total_requests": 32673,
+  "successful_requests": 32673,
+  "failed_requests": 0,
+  "requests_per_second": 535.8347484718109,
+  "min_latency_ms": 23.624181747436523,
+  "avg_latency_ms": 77.60304541852423,
+  "max_latency_ms": 4315.013647079468,
+  "p95_latency_ms": 320.6813335418701,
+  "p99_latency_ms": 539.4036769866943
+}
