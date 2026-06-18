@@ -1,4 +1,5 @@
 name: Workflow for Selenium E2E Testing
+run-name: Workflow for Selenium E2E Testing
 
 on: [push]
 

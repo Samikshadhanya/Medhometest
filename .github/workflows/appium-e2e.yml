@@ -1,4 +1,5 @@
 name: Workflow for Appium
+run-name: Workflow for Appium
 
 on: [push]
 
