@@ -1,4 +1,4 @@
-name: Appium Mobile E2E Tests
+name: Workflow for Appium
 
 on: [push]
 

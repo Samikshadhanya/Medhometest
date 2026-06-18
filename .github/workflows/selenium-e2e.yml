@@ -1,4 +1,4 @@
-name: E2E Selenium Testing Pipeline
+name: Workflow for Selenium E2E Testing
 
 on: [push]
 
