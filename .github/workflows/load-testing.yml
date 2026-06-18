@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - 'tests/load_testing/**'
-      - '.github/workflows/enhanced_load_testing.yml'
+      - '.github/workflows/load-testing.yml'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
