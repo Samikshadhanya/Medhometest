@@ -45,21 +45,35 @@ jobs:
       - name: Run Appium tests on Android Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30                     # Android 11 – matches Capacitor support
+          api-level: 29                     # Android 10 - boots faster than 11
           arch: x86_64
           profile: pixel_4
           avd-name: medhome_avd
           ram-size: 4096M
           heap-size: 512M
           disk-size: 6000M
-          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
           pre-emulator-launch-script: |
             echo "Preparing emulator environment"
           script: |
-            # Wait for emulator to be fully booted
-            echo "Waiting for emulator boot..."
+            # Wait for emulator to be fully booted and Package Manager ready
+            echo "Waiting for adb to see device..."
             adb wait-for-device
+            
+            echo "Waiting for Android system boot to complete..."
+            until [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; do
+              echo "Still booting..."
+              sleep 5
+            done
+            
+            echo "Waiting for Package Manager to be ready..."
+            until adb shell pm path android >/dev/null 2>&1; do
+              echo "Waiting for Package Manager..."
+              sleep 5
+            done
+            
+            echo "Emulator is fully booted and Package Manager is ready!"
             adb shell input keyevent 82   # unlock screen
 
             # Install the MedHome APK onto the emulator
