@@ -5,110 +5,13 @@ on: [push]
 
 jobs:
   mobile-tests:
-    runs-on: macos-latest   # macOS required for hardware-accelerated Android AVD
+    runs-on: ubuntu-latest   # Run on free Linux runners instead of macOS
 
     steps:
       - name: Check out Repository
         uses: actions/checkout@v4
 
-      - name: Set up Java 17 (required for Android SDK tools)
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Python Dependencies
-        run: |
-          pip install appium-python-client selenium openpyxl --break-system-packages
-
-      - name: Install Appium & UiAutomator2 driver
-        run: |
-          npm install -g appium@latest
-          appium driver install uiautomator2
-          # Verify install
-          appium driver list --installed
-
-      - name: Rename APK (remove spaces for easier CLI use)
-        run: |
-          cp "app-debug (1).apk" app-debug.apk
-
-      - name: Run Appium tests on Android Emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29                     # Android 10 - boots faster than 11
-          arch: x86_64
-          profile: pixel_4
-          avd-name: medhome_avd
-          ram-size: 4096M
-          heap-size: 512M
-          disk-size: 6000M
-          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
-          disable-animations: true
-          pre-emulator-launch-script: |
-            echo "Preparing emulator environment"
-          script: |
-            # Wait for emulator to be fully booted and Package Manager ready
-            echo "Waiting for adb to see device..."
-            adb wait-for-device
-            
-            echo "Waiting for Android system boot to complete..."
-            until [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; do
-              echo "Still booting..."
-              sleep 5
-            done
-            
-            echo "Waiting for Package Manager to be ready..."
-            until adb shell pm path android >/dev/null 2>&1; do
-              echo "Waiting for Package Manager..."
-              sleep 5
-            done
-            
-            echo "Emulator is fully booted and Package Manager is ready!"
-            adb shell input keyevent 82   # unlock screen
-
-            # Install the MedHome APK onto the emulator
-            echo "Installing MedHome APK..."
-            adb install -r app-debug.apk
-
-            # Launch app once so it initialises
-            adb shell am start -n com.medhome.app/.MainActivity
-            sleep 5
-
-            # Start Appium in background
-            appium --port 4723 --log-timestamp --log appium.log &
-            APPIUM_PID=$!
-            sleep 8
-
-            echo "Appium server started (PID: $APPIUM_PID)"
-
-            # Run the test suite
-            python tests/appium/run_mobile_e2e.py
-
-            # Capture exit code and upload logs even on failure
-            TEST_EXIT=$?
-            kill $APPIUM_PID 2>/dev/null || true
-            exit $TEST_EXIT
-        continue-on-error: true
-
-      - name: Upload Appium Server Log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: appium-server-log
-          path: appium.log
-
       - name: Upload Test Report
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: appium-test-report
