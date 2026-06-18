@@ -169,7 +169,16 @@ def run_e2e_tests():
     wait = WebDriverWait(driver, 5)
     base_url = "https://medhome-81dq.vercel.app"
     
+    passed_count = 0
+    failed_count = 0
+
     def log_result(tc, status, remarks=""):
+        nonlocal passed_count, failed_count
+        if status == "Passed":
+            passed_count += 1
+        else:
+            failed_count += 1
+            
         time_str = datetime.now().strftime("%H:%M:%S")
         ws.append([tc['id'], tc['module'], tc['desc'], status, time_str, remarks])
         color = "\033[92m" if status == "Passed" else "\033[91m"
@@ -309,6 +318,16 @@ def run_e2e_tests():
     
     finally:
         driver.quit()
+        
+        # Insert summary at the top
+        ws.insert_rows(1, 4)
+        ws.cell(row=1, column=1, value="Total Test Cases:").font = openpyxl.styles.Font(bold=True)
+        ws.cell(row=1, column=2, value=len(TEST_CASES))
+        ws.cell(row=2, column=1, value="Passed:").font = openpyxl.styles.Font(bold=True)
+        ws.cell(row=2, column=2, value=passed_count)
+        ws.cell(row=3, column=1, value="Failed:").font = openpyxl.styles.Font(bold=True)
+        ws.cell(row=3, column=2, value=failed_count)
+
         timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
         report_filename = f"E2E_Test_Report_MedHome_{timestamp}.xlsx"
         

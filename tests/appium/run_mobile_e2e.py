@@ -179,7 +179,16 @@ def run_mobile_e2e_tests():
     appium_server_url = 'http://127.0.0.1:4723'
     driver = None
     
+    passed_count = 0
+    failed_count = 0
+
     def log_result(tc_idx, status, remarks=""):
+        nonlocal passed_count, failed_count
+        if status == "Passed":
+            passed_count += 1
+        else:
+            failed_count += 1
+
         tc = TEST_CASES[tc_idx]
         time_str = datetime.now().strftime("%H:%M:%S")
         ws.append([tc['id'], tc['module'], tc['desc'], status, time_str, remarks])
@@ -390,6 +399,15 @@ def run_mobile_e2e_tests():
     finally:
         if driver:
             driver.quit()
+            
+        # Insert summary at the top
+        ws.insert_rows(1, 4)
+        ws.cell(row=1, column=1, value="Total Test Cases:").font = openpyxl.styles.Font(bold=True)
+        ws.cell(row=1, column=2, value=len(TEST_CASES))
+        ws.cell(row=2, column=1, value="Passed:").font = openpyxl.styles.Font(bold=True)
+        ws.cell(row=2, column=2, value=passed_count)
+        ws.cell(row=3, column=1, value="Failed:").font = openpyxl.styles.Font(bold=True)
+        ws.cell(row=3, column=2, value=failed_count)
             
         timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
         report_filename = os.path.join(os.path.dirname(__file__), f"100Plus_Mobile_Report_{timestamp}.xlsx")
