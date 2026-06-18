@@ -31,12 +31,11 @@ jobs:
           appium &
           sleep 5
 
-      - name: Run Mobile E2E Tests
-        # Note: This runs the mobile e2e script. If `udid` is hardcoded to a local device,
-        # it might fail in CI. You may want to configure `reactivecircus/android-emulator-runner`
-        # in the future if you plan to spin up an emulator inside GitHub Actions.
-        run: |
-          python tests/appium/run_mobile_e2e.py
+      - name: Run Mobile E2E Tests in Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: python tests/appium/run_mobile_e2e.py
         continue-on-error: true
           
       - name: Upload Test Report

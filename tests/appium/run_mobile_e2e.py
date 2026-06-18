@@ -169,7 +169,6 @@ def run_mobile_e2e_tests():
 
     options = UiAutomator2Options()
     options.platform_name = 'Android'
-    options.udid = 'ZN4225VKCK'
     options.automation_name = 'UiAutomator2'
     options.app_package = 'com.medhome.app'
     options.app_activity = '.MainActivity'
