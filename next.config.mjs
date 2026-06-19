@@ -1,3 +1,5 @@
+const isGithubActions = process.env.GITHUB_ACTIONS === 'true';
+
 const nextConfig = {
   turbopack: {
     root: process.cwd(),
@@ -27,6 +29,9 @@ const nextConfig = {
 
   // Ensure all routes are statically generated
   distDir: 'out',
+
+  // Dynamic basePath: Use repository name on GitHub Pages, empty elsewhere
+  basePath: isGithubActions ? '/Medhometest' : '',
 }
 
 export default nextConfig
