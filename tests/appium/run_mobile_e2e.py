@@ -583,6 +583,15 @@ def run_mobile_e2e_tests():
     timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
     report_filename = os.path.join(os.path.dirname(__file__), f"100Plus_Mobile_Report_{timestamp}.xlsx")
 
+    # Delete any old xlsx reports first so only one file exists
+    import glob
+    old_reports = glob.glob(os.path.join(os.path.dirname(__file__), "100Plus_Mobile_Report_*.xlsx"))
+    for old in old_reports:
+        try:
+            os.remove(old)
+        except Exception:
+            pass
+
     try:
         wb.save(report_filename)
         print(f"\n=======================================================")
