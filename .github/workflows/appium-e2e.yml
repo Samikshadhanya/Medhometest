@@ -1,5 +1,5 @@
-name: Workflow for Appium Mobile E2E Testing
-run-name: Workflow for Appium Mobile E2E Testing
+name: Workflow for Appium Testing
+run-name: Workflow for Appium Testing
 
 on:
   push:
