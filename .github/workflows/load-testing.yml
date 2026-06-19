@@ -1,5 +1,5 @@
-name: Enhanced Load Testing Pipeline
-run-name: Enhanced Load Testing Pipeline
+name: Workflow for Load Testing
+run-name: Workflow for Load Testing
 
 on:
   push:
