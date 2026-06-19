@@ -9,7 +9,13 @@ on:
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
-  enhanced-load-tests:
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 1: Web / Backend Load Tests (200 test cases)
+  # - Category 1-5 Core Performance Tests: 25 tests
+  # - Extended Web/Backend Load Tests: 175 tests
+  # - Total Backend/Web: 200 test cases
+  # ─────────────────────────────────────────────────────────────────────────
+  web-load-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -26,15 +32,87 @@ jobs:
         run: |
           pip install aiohttp openpyxl
 
-      - name: Run Enhanced Load Testing Suite
+      - name: Run Web/Backend Load Tests (200 test cases)
         run: |
-          python tests/load_testing/enhanced_load_test_runner.py
+          python tests/load_testing/enhanced_load_test_runner.py --mode web
 
-      - name: Upload Enhanced Load Test Report
+      - name: Upload Web Load Test Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: enhanced-load-test-report
+          name: web-load-test-report
+          path: |
+            tests/load_testing/Enhanced_Load_Test_Report_*.xlsx
+            tests/load_testing/enhanced_load_report.json
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 2: App / Appium Load Tests (150 test cases)
+  # - Appium-Based Load Performance Tests: 150 tests
+  # - Graceful fallback mode when Appium server is offline (CI)
+  # ─────────────────────────────────────────────────────────────────────────
+  app-load-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Dependencies
+        run: |
+          pip install aiohttp openpyxl
+
+      - name: Run App/Appium Load Tests (150 test cases)
+        run: |
+          python tests/load_testing/enhanced_load_test_runner.py --mode app
+
+      - name: Upload App Load Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-load-test-report
+          path: |
+            tests/load_testing/Enhanced_Load_Test_Report_*.xlsx
+            tests/load_testing/enhanced_load_report.json
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 3: Full Combined Load Test Report (350 total test cases)
+  # - Runs all categories together and produces the combined report
+  # ─────────────────────────────────────────────────────────────────────────
+  full-load-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [web-load-tests, app-load-tests]
+
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Dependencies
+        run: |
+          pip install aiohttp openpyxl
+
+      - name: Run Full Load Test Suite (350 test cases — Web 200 + App 150)
+        run: |
+          python tests/load_testing/enhanced_load_test_runner.py
+
+      - name: Upload Full Load Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-load-test-report
           path: |
             tests/load_testing/Enhanced_Load_Test_Report_*.xlsx
             tests/load_testing/enhanced_load_report.json
