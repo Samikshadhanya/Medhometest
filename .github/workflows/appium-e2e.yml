@@ -3,9 +3,6 @@ run-name: Appium Mobile E2E Testing Pipeline
 
 on:
   push:
-    paths:
-      - 'tests/appium/**'
-      - '.github/workflows/appium-e2e.yml'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:

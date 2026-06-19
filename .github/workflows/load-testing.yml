@@ -3,9 +3,6 @@ run-name: Enhanced Load Testing Pipeline
 
 on:
   push:
-    paths:
-      - 'tests/load_testing/**'
-      - '.github/workflows/load-testing.yml'
   workflow_dispatch:
 
 jobs:
