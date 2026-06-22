@@ -19,29 +19,36 @@ service cloud.firestore {
     }
 
     function belongsToHousehold(householdId) {
-      return signedIn() && householdId in userHouseholdIds();
+      return signedIn() && (householdId in userHouseholdIds() || isHouseholdOwner(householdId));
+    }
+
+    function addedHouseholdIds() {
+      return !('householdIds' in request.resource.data) ? [] :
+             !('householdIds' in resource.data) ? request.resource.data.householdIds :
+             request.resource.data.householdIds.removeAll(resource.data.householdIds);
+    }
+
+    function isHouseholdOwner(householdId) {
+      return exists(/databases/$(database)/documents/households/$(householdId)) &&
+             get(/databases/$(database)/documents/households/$(householdId)).data.ownerUid == request.auth.uid;
     }
 
     match /users/{userId} {
       allow read: if signedIn() && request.auth.uid == userId;
       allow create: if signedIn() && request.auth.uid == userId;
       // SECURITY FIX: Prevent householdIds self-escalation.
-      // affectedKeys() alone was bypassable via the REST API PATCH.
-      // Now we ALSO assert the incoming householdIds must equal the stored value.
-      // If the document has no householdIds yet, only allow setting it to an empty list.
+      // We check that any newly added household ID must be owned by the user.
       allow update: if signedIn()
                     && request.auth.uid == userId
                     && (
-                         // householdIds field not present in incoming data at all
                          !('householdIds' in request.resource.data)
                          ||
-                         // householdIds present but unchanged from stored value
-                         (resource.data.keys().hasAll(['householdIds'])
-                          && request.resource.data.householdIds == resource.data.householdIds)
-                         ||
-                         // householdIds not in stored doc yet — allow only empty list
-                         (!resource.data.keys().hasAll(['householdIds'])
-                          && request.resource.data.householdIds == [])
+                         (
+                           addedHouseholdIds().size() == 0
+                           ||
+                           (addedHouseholdIds().size() == 1 &&
+                            isHouseholdOwner(addedHouseholdIds()[0]))
+                         )
                        );
       allow delete: if false;
     }

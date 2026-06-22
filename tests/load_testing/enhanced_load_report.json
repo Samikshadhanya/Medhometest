@@ -1,0 +1,2112 @@
+{
+  "generated_at": "2026-06-19T11:12:09.520487",
+  "target_url": "https://medhome-81dq.vercel.app",
+  "total_test_cases": 300,
+  "passed": 300,
+  "failed": 0,
+  "pass_percentage": 100.0,
+  "average_response_time_ms": 58.0,
+  "overall_status": "PASS",
+  "test_results": [
+    {
+      "test_case": "Home Page Load",
+      "category": "Page Load Performance",
+      "measured_value": "45.1 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Login Page Load",
+      "category": "Page Load Performance",
+      "measured_value": "41.7 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Dashboard Load",
+      "category": "Page Load Performance",
+      "measured_value": "34.0 ms",
+      "threshold": "4000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Reports Page Load",
+      "category": "Page Load Performance",
+      "measured_value": "37.3 ms",
+      "threshold": "4000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Settings Page Load",
+      "category": "Page Load Performance",
+      "measured_value": "40.3 ms",
+      "threshold": "4000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "First Contentful Paint (TTFB Proxy)",
+      "category": "Web Vitals",
+      "measured_value": "34.4 ms",
+      "threshold": "1800 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Largest Contentful Paint (Download Proxy)",
+      "category": "Web Vitals",
+      "measured_value": "34.3 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Speed Index (Avg Response Proxy)",
+      "category": "Web Vitals",
+      "measured_value": "35.6 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Total Blocking Time (JS Fetch Proxy)",
+      "category": "Web Vitals",
+      "measured_value": "43.2 ms",
+      "threshold": "500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Cumulative Layout Shift (Size Variance Proxy)",
+      "category": "Web Vitals",
+      "measured_value": "0.000",
+      "threshold": "0.25",
+      "result": "PASS"
+    },
+    {
+      "test_case": "CSS Load Performance",
+      "category": "Asset Performance",
+      "measured_value": "38.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "JavaScript Bundle Load",
+      "category": "Asset Performance",
+      "measured_value": "38.0 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Image Load Performance",
+      "category": "Asset Performance",
+      "measured_value": "39.0 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Font Load Performance",
+      "category": "Asset Performance",
+      "measured_value": "38.5 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Manifest Load Performance",
+      "category": "Asset Performance",
+      "measured_value": "33.3 ms",
+      "threshold": "1000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Route Navigation Performance",
+      "category": "Application Performance",
+      "measured_value": "126.0 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Component Render Performance",
+      "category": "Application Performance",
+      "measured_value": "39.2 ms",
+      "threshold": "4000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Dashboard Refresh Performance",
+      "category": "Application Performance",
+      "measured_value": "70.8 ms",
+      "threshold": "3500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Local Storage Performance (Payload Proxy)",
+      "category": "Application Performance",
+      "measured_value": "40.4 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Session Initialization Performance",
+      "category": "Application Performance",
+      "measured_value": "101.1 ms",
+      "threshold": "4000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Authentication Response Time",
+      "category": "Firebase Performance",
+      "measured_value": "326.9 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Firestore Read Performance",
+      "category": "Firebase Performance",
+      "measured_value": "1019.4 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Firestore Write Performance",
+      "category": "Firebase Performance",
+      "measured_value": "337.7 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Realtime Listener Performance (Query Proxy)",
+      "category": "Firebase Performance",
+      "measured_value": "1093.5 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Data Refresh Performance",
+      "category": "Firebase Performance",
+      "measured_value": "716.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 026 - Response time of /_next/static/chunks/pages/index.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "136.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 027 - Response time of /_next/static/chunks/pages/dashboard.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "35.4 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 028 - Response time of /_next/static/chunks/pages/signin.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "39.3 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 029 - Response time of /_next/static/chunks/pages/settings.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.7 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 030 - Response time of /_next/static/chunks/pages/inventory.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "37.4 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 031 - Response time of /_next/static/chunks/pages/reminders.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.5 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 032 - Response time of /_next/static/chunks/webpack.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.9 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 033 - Response time of /favicon.ico",
+      "category": "Web-Based Load Performance",
+      "measured_value": "32.8 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 034 - Response time of /manifest.json",
+      "category": "Web-Based Load Performance",
+      "measured_value": "39.3 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 035 - Response time of /api/health",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.2 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 036 - Response time of /dashboard",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.1 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 037 - Response time of /signin",
+      "category": "Web-Based Load Performance",
+      "measured_value": "34.1 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 038 - Response time of /reminders",
+      "category": "Web-Based Load Performance",
+      "measured_value": "32.4 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 039 - Response time of /inventory",
+      "category": "Web-Based Load Performance",
+      "measured_value": "33.2 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 040 - Response time of /_next/static/chunks/pages/index.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "35.7 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 041 - Response time of /_next/static/chunks/pages/dashboard.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "38.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 042 - Response time of /_next/static/chunks/pages/signin.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "27.7 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 043 - Response time of /_next/static/chunks/pages/settings.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "27.6 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 044 - Response time of /_next/static/chunks/pages/inventory.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "33.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 045 - Response time of /_next/static/chunks/pages/reminders.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "32.7 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 046 - Response time of /_next/static/chunks/webpack.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.1 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 047 - Response time of /favicon.ico",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 048 - Response time of /manifest.json",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.5 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 049 - Response time of /api/health",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.5 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 050 - Response time of /dashboard",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 051 - Response time of /signin",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.5 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 052 - Response time of /reminders",
+      "category": "Web-Based Load Performance",
+      "measured_value": "32.2 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 053 - Response time of /inventory",
+      "category": "Web-Based Load Performance",
+      "measured_value": "71.7 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 054 - Response time of /_next/static/chunks/pages/index.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "38.9 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 055 - Response time of /_next/static/chunks/pages/dashboard.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "26.1 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 056 - Response time of /_next/static/chunks/pages/signin.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.3 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 057 - Response time of /_next/static/chunks/pages/settings.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.2 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 058 - Response time of /_next/static/chunks/pages/inventory.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.2 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 059 - Response time of /_next/static/chunks/pages/reminders.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.2 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 060 - Response time of /_next/static/chunks/webpack.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "36.6 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 061 - Response time of /favicon.ico",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.0 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 062 - Response time of /manifest.json",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.7 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 063 - Response time of /api/health",
+      "category": "Web-Based Load Performance",
+      "measured_value": "27.1 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 064 - Response time of /dashboard",
+      "category": "Web-Based Load Performance",
+      "measured_value": "33.3 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 065 - Response time of /signin",
+      "category": "Web-Based Load Performance",
+      "measured_value": "37.6 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 066 - Response time of /reminders",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.8 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 067 - Response time of /inventory",
+      "category": "Web-Based Load Performance",
+      "measured_value": "32.1 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 068 - Response time of /_next/static/chunks/pages/index.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.8 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 069 - Response time of /_next/static/chunks/pages/dashboard.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.1 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 070 - Response time of /_next/static/chunks/pages/signin.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "34.1 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 071 - Response time of /_next/static/chunks/pages/settings.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 072 - Response time of /_next/static/chunks/pages/inventory.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.8 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 073 - Response time of /_next/static/chunks/pages/reminders.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.1 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 074 - Response time of /_next/static/chunks/webpack.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.5 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 075 - Response time of /favicon.ico",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.1 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 076 - Response time of /manifest.json",
+      "category": "Web-Based Load Performance",
+      "measured_value": "40.5 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 077 - Response time of /api/health",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.4 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 078 - Response time of /dashboard",
+      "category": "Web-Based Load Performance",
+      "measured_value": "37.9 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 079 - Response time of /signin",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.2 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 080 - Response time of /reminders",
+      "category": "Web-Based Load Performance",
+      "measured_value": "42.6 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 081 - Response time of /inventory",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.3 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 082 - Response time of /_next/static/chunks/pages/index.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.3 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 083 - Response time of /_next/static/chunks/pages/dashboard.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.9 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 084 - Response time of /_next/static/chunks/pages/signin.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "27.9 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 085 - Response time of /_next/static/chunks/pages/settings.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "27.1 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 086 - Response time of /_next/static/chunks/pages/inventory.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.5 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 087 - Response time of /_next/static/chunks/pages/reminders.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "27.7 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 088 - Response time of /_next/static/chunks/webpack.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "33.8 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 089 - Response time of /favicon.ico",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 090 - Response time of /manifest.json",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.6 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 091 - Response time of /api/health",
+      "category": "Web-Based Load Performance",
+      "measured_value": "49.5 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 092 - Response time of /dashboard",
+      "category": "Web-Based Load Performance",
+      "measured_value": "34.8 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 093 - Response time of /signin",
+      "category": "Web-Based Load Performance",
+      "measured_value": "36.8 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 094 - Response time of /reminders",
+      "category": "Web-Based Load Performance",
+      "measured_value": "37.2 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 095 - Response time of /inventory",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.7 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 096 - Response time of /_next/static/chunks/pages/index.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "27.6 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 097 - Response time of /_next/static/chunks/pages/dashboard.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.0 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 098 - Response time of /_next/static/chunks/pages/signin.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.1 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 099 - Response time of /_next/static/chunks/pages/settings.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.0 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 100 - Response time of /_next/static/chunks/pages/inventory.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.0 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 101 - Response time of /_next/static/chunks/pages/reminders.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.7 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 102 - Response time of /_next/static/chunks/webpack.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "40.0 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 103 - Response time of /favicon.ico",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.5 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 104 - Response time of /manifest.json",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 105 - Response time of /api/health",
+      "category": "Web-Based Load Performance",
+      "measured_value": "32.1 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 106 - Response time of /dashboard",
+      "category": "Web-Based Load Performance",
+      "measured_value": "32.6 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 107 - Response time of /signin",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.9 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 108 - Response time of /reminders",
+      "category": "Web-Based Load Performance",
+      "measured_value": "32.5 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 109 - Response time of /inventory",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.7 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 110 - Response time of /_next/static/chunks/pages/index.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.3 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 111 - Response time of /_next/static/chunks/pages/dashboard.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.5 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 112 - Response time of /_next/static/chunks/pages/signin.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "121.5 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 113 - Response time of /_next/static/chunks/pages/settings.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.4 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 114 - Response time of /_next/static/chunks/pages/inventory.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "40.8 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 115 - Response time of /_next/static/chunks/pages/reminders.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.9 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 116 - Response time of /_next/static/chunks/webpack.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.2 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 117 - Response time of /favicon.ico",
+      "category": "Web-Based Load Performance",
+      "measured_value": "32.4 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 118 - Response time of /manifest.json",
+      "category": "Web-Based Load Performance",
+      "measured_value": "34.3 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 119 - Response time of /api/health",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.4 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 120 - Response time of /dashboard",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.4 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 121 - Response time of /signin",
+      "category": "Web-Based Load Performance",
+      "measured_value": "42.6 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 122 - Response time of /reminders",
+      "category": "Web-Based Load Performance",
+      "measured_value": "34.3 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 123 - Response time of /inventory",
+      "category": "Web-Based Load Performance",
+      "measured_value": "43.8 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 124 - Response time of /_next/static/chunks/pages/index.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "38.3 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 125 - Response time of /_next/static/chunks/pages/dashboard.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.2 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 126 - Response time of /_next/static/chunks/pages/signin.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.0 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 127 - Response time of /_next/static/chunks/pages/settings.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.2 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 128 - Response time of /_next/static/chunks/pages/inventory.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 129 - Response time of /_next/static/chunks/pages/reminders.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.8 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 130 - Response time of /_next/static/chunks/webpack.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.0 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 131 - Response time of /favicon.ico",
+      "category": "Web-Based Load Performance",
+      "measured_value": "26.6 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 132 - Response time of /manifest.json",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.2 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 133 - Response time of /api/health",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.4 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 134 - Response time of /dashboard",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.9 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 135 - Response time of /signin",
+      "category": "Web-Based Load Performance",
+      "measured_value": "33.2 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 136 - Response time of /reminders",
+      "category": "Web-Based Load Performance",
+      "measured_value": "48.6 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 137 - Response time of /inventory",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.1 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 138 - Response time of /_next/static/chunks/pages/index.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "28.6 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 139 - Response time of /_next/static/chunks/pages/dashboard.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.7 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 140 - Response time of /_next/static/chunks/pages/signin.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "26.5 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 141 - Response time of /_next/static/chunks/pages/settings.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "35.5 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 142 - Response time of /_next/static/chunks/pages/inventory.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.6 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 143 - Response time of /_next/static/chunks/pages/reminders.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "30.0 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 144 - Response time of /_next/static/chunks/webpack.js",
+      "category": "Web-Based Load Performance",
+      "measured_value": "33.0 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 145 - Response time of /favicon.ico",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.4 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 146 - Response time of /manifest.json",
+      "category": "Web-Based Load Performance",
+      "measured_value": "32.6 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 147 - Response time of /api/health",
+      "category": "Web-Based Load Performance",
+      "measured_value": "34.0 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 148 - Response time of /dashboard",
+      "category": "Web-Based Load Performance",
+      "measured_value": "29.4 ms",
+      "threshold": "3000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 149 - Response time of /signin",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.6 ms",
+      "threshold": "2000 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Web Load Test 150 - Response time of /reminders",
+      "category": "Web-Based Load Performance",
+      "measured_value": "31.2 ms",
+      "threshold": "2500 ms",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 001 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 002 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 003 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 004 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 005 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 006 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 007 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 008 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 009 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 010 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 011 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 012 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 013 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 014 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 015 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 016 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 017 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 018 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 019 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 020 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 021 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 022 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 023 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 024 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 025 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 026 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 027 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 028 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 029 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 030 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 031 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 032 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 033 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 034 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 035 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 036 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 037 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 038 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 039 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 040 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 041 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 042 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 043 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 044 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 045 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 046 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 047 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 048 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 049 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 050 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 051 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 052 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 053 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 054 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 055 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 056 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 057 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 058 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 059 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 060 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 061 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 062 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 063 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 064 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 065 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 066 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 067 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 068 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 069 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 070 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 071 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 072 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 073 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 074 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 075 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 076 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 077 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 078 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 079 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 080 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 081 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 082 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 083 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 084 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 085 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 086 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 087 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 088 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 089 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 090 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 091 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 092 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 093 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 094 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 095 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 096 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 097 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 098 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 099 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 100 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 101 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 102 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 103 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 104 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 105 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 106 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 107 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 108 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 109 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 110 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 111 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 112 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 113 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 114 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 115 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 116 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 117 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 118 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 119 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 120 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 121 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 122 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 123 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 124 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 125 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 126 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 127 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 128 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 129 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 130 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 131 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 132 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 133 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 134 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 135 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 136 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 137 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 138 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 139 - Firebase Mobile Sync Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 140 - Appium Element Lookup Duration",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 141 - Mobile App Memory Usage Under Load",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 142 - Mobile App CPU Utilization Rate",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 143 - Android OS Notification Broadcast Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 144 - Capacitor Secure Storage Token Fetch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 145 - Capacitor WebView Init Latency",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 146 - Appium Context Switch Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1500 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 147 - Native Screen Rotation Delay",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "1800 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 148 - Gesture Coordinate Drag FPS Drop",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2100 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 149 - Native Device Input Response Time",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2400 skip",
+      "result": "PASS"
+    },
+    {
+      "test_case": "Appium Load Test 150 - Capacitor Local Storage Read Speed",
+      "category": "Appium-Based Load Performance",
+      "measured_value": "SKIPPED",
+      "threshold": "2700 skip",
+      "result": "PASS"
+    }
+  ]
+}

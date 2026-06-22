@@ -8,6 +8,8 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut as firebaseSignOut,
+  signInWithCredential,
+  GoogleAuthProvider,
 } from 'firebase/auth';
 import { initialState, medicineImage } from '@/lib/initial-data';
 import type { AppState, AppUser, Caregiver, FamilyMember, Household, Medicine, MedicineInput, MemberInput, ReminderInput, ReminderLog } from '@/lib/types';
@@ -177,7 +179,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setError(null);
 
         if (provider === 'google') {
-          await signInWithPopup(auth, googleProvider);
+          const { Capacitor } = await import('@capacitor/core');
+          if (Capacitor.isNativePlatform()) {
+            const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
+            const result = await FirebaseAuthentication.signInWithGoogle();
+            if (result?.credential?.idToken) {
+              const credential = GoogleAuthProvider.credential(result.credential.idToken);
+              await signInWithCredential(auth, credential);
+            } else {
+              throw new Error('Google native sign-in failed: No ID token returned.');
+            }
+          } else {
+            await signInWithPopup(auth, googleProvider);
+          }
           await loadAuthenticatedUser(auth.currentUser?.uid);
           return;
         }
